@@ -1,0 +1,42 @@
+#!/bin/bash
+set -u
+
+# Source YunoHost helpers
+source /usr/share/yunohost/helpers
+source future.sh
+source common.sh
+
+# Retrieve app settings
+APP=$YNH_APP_INSTANCE_NAME
+app=$APP
+DOMAIN=$(ynh_app_setting_get "$APP" domain)
+
+# FIXME FIXME FIXME
+# Add tests that stuff actually exists before removing them
+
+# Remove mysql table
+ynh_mysql_drop_user $app
+ynh_mysql_drop_db $app
+
+# Remove dependencies
+ynh_remove_app_dependencies
+
+# Remove nginx configuration file
+sudo rm -f /etc/nginx/conf.d/$DOMAIN.d/$APP.conf
+
+# Remove services
+
+sudo service $APP stop
+sudo killall $APP
+sudo yunohost service remove $APP
+sudo rm -f /etc/systemd/system/$APP.service
+sudo systemctl daemon-reload
+
+# Remove sources
+ynh_secure_remove /opt/$APP
+
+# Delete system user
+ynh_system_user_delete $APP 
+
+# Reload nginx service
+sudo service nginx reload
