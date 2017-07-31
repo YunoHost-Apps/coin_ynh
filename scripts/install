@@ -12,7 +12,9 @@ readonly app=$YNH_APP_INSTANCE_NAME
 
 # Retrieve arguments
 readonly domain=$YNH_APP_ARG_DOMAIN
-readonly path=$YNH_APP_ARG_PATH
+#readonly path=$YNH_APP_ARG_PATH
+readonly path=/
+
 readonly admin=$YNH_APP_ARG_ADMIN
 readonly email=$YNH_APP_ARG_EMAIL
 
