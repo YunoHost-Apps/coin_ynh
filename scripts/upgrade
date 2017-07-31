@@ -1,1 +1,47 @@
 #!/bin/bash
+source /usr/share/yunohost/helpers
+source common.sh
+source future.sh
+
+export app=$YNH_APP_INSTANCE_NAME
+user=$app
+
+export domain=$(ynh_app_setting_get $app domain)
+export path=$(ynh_app_setting_get $app path)
+export admin=$(ynh_app_setting_get $app admin)
+export email=$(ynh_app_setting_get $app email)
+export isp_name=$(ynh_app_setting_get $app isp_name)
+export isp_site=$(ynh_app_setting_get $app isp_site)
+export secret=$(ynh_app_setting_get $app secret)
+version=$(ynh_read_json "/etc/yunohost/apps/$app/manifest.json" 'version' 2> /dev/null || echo '20170408')
+last_version=$(ynh_read_manifest 'version')
+
+ynh_exit_if_up_to_date
+ynh_check_var "$app" "app name not set"
+ynh_user_exists "$admin" || err "User does not exist: $admin"
+ynh_normalize_url_path "$path"
+
+#if [ "${version}" = "20170408" ]; then
+#fi
+
+# Copy files to the right place
+final_path=/opt/$app
+ynh_setup_source $final_path
+
+set +o nounset 
+source $final_path/venv/bin/activate
+set -o nounset
+$final_path/venv/bin/pip install -r $final_path/requirements.txt
+
+# Set permissions
+sudo useradd $app -d $final_path || echo "User already exists"
+sudo chown -R $app:www-data $final_path
+
+pushd $final_path
+$final_path/venv/bin/python manage.py migrate --noinput
+$final_path/venv/bin/python manage.py collectstatic --noinput
+popd 
+
+# Set permissions to directory
+sudo chown $app:www-data -R $final_path
+

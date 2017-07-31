@@ -13,7 +13,7 @@
     "requirements": {
         "yunohost": ">> 2.5.0"
     },
-    "version": "20170408",
+    "version": "20170731",
     "multi_instance": "false",
     "services": [
         "nginx"

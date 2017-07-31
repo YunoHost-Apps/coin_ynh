@@ -1,3 +1,21 @@
+
+log() {
+  echo "${1}"
+}
+
+info() {
+  log "[INFO] ${1}"
+}
+
+warn() {
+  log "[WARN] ${1}"
+}
+
+err() {
+  log "[ERR] ${1}"
+}
+
+
 #======================================================================
 # data/helpers.d/package
 #======================================================================
@@ -170,3 +188,54 @@ ynh_setup_source () {
     fi
 
 }
+
+ynh_exit_properly () {  
+    exit_code=$?
+    if [ "$exit_code" -eq 0 ]; then
+            exit 0  
+    fi
+    trap '' EXIT
+    set +eu
+    echo -e "\e[91m \e[1m"  
+    err "$app script has encountered an error."
+
+    if type -t CLEAN_SETUP > /dev/null; then
+        CLEAN_SETUP
+    fi
+
+    ynh_die
+}
+
+# Activate signal capture
+# Exit if a command fail, and if a variable is used unset.
+# Capturing exit signals on shell script
+#
+# example: CLEAN_SETUP () {
+#             # Clean residual file un remove by remove script
+#          }
+#          ynh_trap_on
+ynh_trap_on () {
+    set -eu
+    trap ynh_exit_properly EXIT # Capturing exit signals on shell script
+}
+
+ynh_read_json () {
+    sudo python3 -c "import sys, json;print(json.load(open('$1'))['$2'])"
+}
+
+ynh_read_manifest () {
+    if [ -f '../manifest.json' ] ; then
+        ynh_read_json '../manifest.json' "$1"
+    else
+        ynh_read_json '../settings/manifest.json' "$1"
+    fi
+}
+
+ynh_exit_if_up_to_date () {
+    if [ "${version}" = "${last_version}" ]; then
+        info "Up-to-date, nothing to do"
+        exit 0
+    fi
+}
+
+

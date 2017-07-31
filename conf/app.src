@@ -1,5 +1,5 @@
-SOURCE_URL=https://code.ffdn.org/FFDN/coin/archive/87a63df9409728e402301690a16aae2ad693c7ff.tar.gz
-SOURCE_FILENAME=coin-2017-04-08.tar.gz
+SOURCE_URL=https://code.ffdn.org/FFDN/coin/archive/b746cf1059cc3308e2e9e197a5e023522bf184ea.tar.gz
+SOURCE_FILENAME=coin-2017-07-31.tar.gz
 SOURCE_FORMAT=tar.gz
-SOURCE_SUM=be9c152a35bc45c14cb80bfb9d6912ecfaab001a669dc56e8a3ace45c199612c
+SOURCE_SUM=de3807acef0069043be5376860e8bbabbb4cb4697778d37a031aa15ccfbae2dc
 SOURCE_SUM_PRG=sha256sum
