@@ -24,9 +24,12 @@ ynh_normalize_url_path "$path"
 #if [ "${version}" = "20170408" ]; then
 #fi
 
+# Install new dependencies
+install_dependencies
+
 # Copy files to the right place
 final_path=/opt/$app
-ynh_setup_source $final_path
+[ -L ${final_path}/coin ] || ynh_setup_source $final_path
 
 set +o nounset 
 source $final_path/venv/bin/activate
@@ -34,14 +37,39 @@ set -o nounset
 $final_path/venv/bin/pip install -r $final_path/requirements.txt
 
 # Set permissions
-sudo useradd $app -d $final_path || echo "User already exists"
-sudo chown -R $app:www-data $final_path
+useradd $app -d $final_path || echo "User already exists"
+chown -R $app:www-data $final_path
 
 pushd $final_path
+if [ "${version}" = "20170731" ]; then
+    init_db
+    ynh_app_setting_delete $app mysqlpassword
+    $final_path/venv/bin/python manage.py dumpdata > /tmp/dump.json
+    
+    cat >> /opt/$app/coin/settings_local.py <<EOF
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '$db_name',
+        'USER': '$db_user',
+        'PASSWORD': '$db_pwd',
+        'HOST': '',  # Empty for localhost through domain sockets
+        'PORT': '',  # Empty for default
+    },
+}
+EOF
+fi
+
 $final_path/venv/bin/python manage.py migrate --noinput
+
+if [ "${version}" = "20170731" ]; then
+    $final_path/venv/bin/python manage.py loaddata /tmp/dump.json
+fi
+
 $final_path/venv/bin/python manage.py collectstatic --noinput
 popd 
 
 # Set permissions to directory
-sudo chown $app:www-data -R $final_path
+chown $app:www-data -R $final_path
 
+[ -L ${final_path}/coin ] || service coin restart

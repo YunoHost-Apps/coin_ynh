@@ -4,18 +4,18 @@ import os
 
 DEBUG = TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS= ['YNH_APP_ARG_DOMAIN']
+ALLOWED_HOSTS = ['YNH_APP_ARG_DOMAIN']
 
-URL_PREFIX='YNH_APP_PREFIX'
-STATIC_ROOT='YNH_APP_STATIC_ROOT'
-NOTIFICATION_EMAILS=['YNH_APP_ARG_EMAIL']
-DEFAULT_FROM_EMAIL='notifier@YNH_APP_ARG_DOMAIN'
-SITE_URL="https://YNH_APP_ARG_DOMAINYNH_APP_ARG_PATH"
+URL_PREFIX = 'YNH_APP_PREFIX'
+STATIC_ROOT = 'YNH_APP_STATIC_ROOT'
+NOTIFICATION_EMAILS = ['YNH_APP_ARG_EMAIL']
+DEFAULT_FROM_EMAIL = 'notifier@YNH_APP_ARG_DOMAIN'
+SITE_URL = "https://YNH_APP_ARG_DOMAINYNH_APP_ARG_PATH"
 SECRET_KEY = 'YNH_APP_SECRET_KEY'
-ISP={
-    'NAME':'YNH_APP_ARG_ISP_NAME',
-    'SITE':'YNH_APP_ARG_ISP_SITE',
-    'EMAIL':'YNH_APP_ARG_EMAIL',
+ISP = {
+    'NAME' : 'YNH_APP_ARG_ISP_NAME',
+    'SITE' : 'YNH_APP_ARG_ISP_SITE',
+    'EMAIL' : 'YNH_APP_ARG_EMAIL',
 }
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -23,18 +23,14 @@ PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': './coin.db',
-        #'NAME': 'YNH_DB_NAME',
-        #'USER': 'YNH_DB_USER',
-        #'PASSWORD': 'YNH_DB_PASSWORD',
-        #'HOST': '',  # Empty for localhost through domain sockets
-        #'PORT': '',  # Empty for default
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'YNH_DB_NAME',
+        'USER': 'YNH_DB_USER',
+        'PASSWORD': 'YNH_DB_PASSWORD',
+        'HOST': '',  # Empty for localhost through domain sockets
+        'PORT': '',  # Empty for default
     },
 }
-
-
-
 
 DEFAULT_FROM_EMAIL = "YNH_APP_ARG_EMAIL"
 
