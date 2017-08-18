@@ -123,7 +123,7 @@ function configure_nginx_and_ssowat()
 }
 
 configure_app
-#init_db
+init_db
 install_dependencies
 
 
