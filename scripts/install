@@ -123,8 +123,8 @@ function configure_nginx_and_ssowat()
 }
 
 configure_app
-init_db
 install_dependencies
+init_db
 
 
     # Copy files to the right place
