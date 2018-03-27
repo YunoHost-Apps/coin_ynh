@@ -1,0 +1,23 @@
+From 5dbe24ccb81eaca81cbfc608e2aa70528dd3bc2c Mon Sep 17 00:00:00 2001
+From: ljf <ljf+yunohost@grimaud.me>
+Date: Tue, 27 Mar 2018 16:21:00 +0200
+Subject: [PATCH] [fix] requirements
+
+---
+ requirements.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/requirements.txt b/requirements.txt
+index 65b8bf8..e57bb95 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,5 +1,5 @@
+ Django>=1.8.17,<1.9
+-psycopg2==2.5.2
++psycopg2>=2.5.4
+ python-ldap==2.4.15
+ wsgiref==0.1.2
+ python-dateutil==2.2
+-- 
+2.16.2
+
