@@ -6,15 +6,18 @@
         "en": "Member dashboard for non profit isp.",
         "fr": "Coin est un Outil pour un Internet Neutre."
     },
+    "license": "free",
     "maintainer": {
         "name": "ljf",
-        "email": "ljf+yunohost@grimaud.me"
+        "email": "ljf+coin_ynh@grimaud.me",
+        "url": "https://www.arn-fai.net"
     },
+    "url": "https://code.ffdn.org/FFDN/coin/",
     "requirements": {
         "yunohost": ">> 2.5.0"
     },
-    "version": "20170802",
-    "multi_instance": "false",
+    "version": "20170802~ynh1",
+    "multi_instance": false,
     "services": [
         "nginx"
     ],
