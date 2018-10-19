@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import os
 from settings_base import *
 
-DEBUG = TEMPLATE_DEBUG = True
+DEBUG = TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['YNH_APP_ARG_DOMAIN']
 
