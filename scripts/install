@@ -31,8 +31,7 @@ ynh_user_exists $admin \
 function configure_app()
 {
     # Check domain/path availability
-    sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-        || ynh_die "Path not available: ${domain}${path}"
+    ynh_webpath_register "$app" "$domain" "$path"
 
     ynh_app_setting_set "$app" admin "$admin"
     ynh_app_setting_set "$app" email "$email"
