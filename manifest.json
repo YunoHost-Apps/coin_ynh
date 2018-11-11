@@ -6,7 +6,7 @@
         "en": "Member dashboard for non profit isp.",
         "fr": "Coin est un Outil pour un Internet Neutre."
     },
-    "license": "free",
+    "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "ljf",
         "email": "ljf+coin_ynh@grimaud.me",
