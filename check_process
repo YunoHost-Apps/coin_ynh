@@ -2,9 +2,10 @@
 	auto_remove=1
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		path="/path"	(PATH)
 		admin="john"	(USER)
 	    email="john@example.com"
+        isp_name="ARN"
+        isp_site="https://arn-fai.net"
     ; Checks
 		pkg_linter=1
 		setup_sub_dir=0
