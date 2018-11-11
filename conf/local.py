@@ -33,8 +33,6 @@ DATABASES = {
     },
 }
 
-DEFAULT_FROM_EMAIL = "YNH_APP_ARG_EMAIL"
-
 FEEDS = (('isp', 'http://www.illyse.net/feed/', 3),
          ('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3))
 
