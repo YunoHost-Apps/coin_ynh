@@ -15,8 +15,7 @@ DOMAIN=$(ynh_app_setting_get "$APP" domain)
 # Add tests that stuff actually exists before removing them
 
 # Remove mysql table
-ynh_psql_drop_db $app
-ynh_psql_drop_user $app
+ynh_psql_remove_db $app $app
 
 # Remove dependencies
 ynh_remove_app_dependencies
