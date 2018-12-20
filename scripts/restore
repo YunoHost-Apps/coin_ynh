@@ -17,6 +17,7 @@ email=$(ynh_app_setting_get "$app" email)
 isp_name=$(ynh_app_setting_get "$app" isp_name)
 isp_site=$(ynh_app_setting_get "$app" isp_site)
 secret=$(ynh_app_setting_get "$app" secret)
+db_pwd=$(ynh_app_setting_get "$app" psqlpassword)
 
 # Check domain/path availability
 sudo yunohost app checkurl $domain$path -a $app \
@@ -60,6 +61,13 @@ sudo chmod 644 $gunicorn_path
 if ynh_user_exists $admin; then
     sudo yunohost app addaccess $app -u $admin
 fi
+
+# Restore database
+ynh_psql_test_if_first_run
+db_name=$app
+db_user=$app
+ynh_psql_create_db $db_name $db_user $db_pwd
+ynh_psql_execute_file_as_root "${YNH_CWD}/dump.sql" "$db_name"
 
 # Log folder
 sudo mkdir -p /var/log/$app

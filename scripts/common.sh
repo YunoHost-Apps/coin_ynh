@@ -7,9 +7,7 @@ function install_dependencies()
 
 function init_db()
 {
-    sed -i '/local\s*all\s*all\s*peer/i \
-local all coin password' /etc/postgresql/9.*/main/pg_hba.conf
-    service postgresql reload
+    ynh_psql_test_if_first_run
     # Generate random password
     db_name=$app
     db_user=$app
