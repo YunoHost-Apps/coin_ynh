@@ -98,13 +98,14 @@ function configure_gunicorn()
     sudo cp ../conf/gunicorn.service /etc/systemd/system/$app.service
     sudo systemctl daemon-reload
     sudo cp ../conf/gunicorn_config.py /opt/$app/
+    chown $app:www-data /opt/$app/gunicorn_config.py
 }
 
 function configure_nginx_and_ssowat()
 {
     # Reload Nginx and regenerate SSOwat conf
     sudo yunohost app addaccess $app -u $admin
-    
+
     # Modify Nginx configuration file and copy it to Nginx conf directory
     sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
     sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
