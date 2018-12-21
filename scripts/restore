@@ -50,7 +50,7 @@ sudo cp -a ./sources $final_path
 useradd $app -d $final_path || echo "User already exists"
 
 # Set permissions
-sudo chown -R www-data:www-data $final_path
+sudo chown -R $app:www-data $final_path
 
 # Restore conf files
 sudo cp -a ./nginx.conf $conf
