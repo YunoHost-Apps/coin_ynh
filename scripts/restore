@@ -8,6 +8,7 @@ app=$YNH_APP_INSTANCE_NAME
 
 # Source YunoHost helpers
 . /usr/share/yunohost/helpers
+source ../settings/scripts/common.sh
 
 # Retrieve old app settings
 domain=$(ynh_app_setting_get "$app" domain)
@@ -40,7 +41,7 @@ if [ -f $gunicorn_path ]; then
 fi
 
 # Dependences
-ynh_package_install python3-pip python3-virtualenv
+install_dependencies
 
 # Restore sources & data
 sudo cp -a ./sources $final_path
