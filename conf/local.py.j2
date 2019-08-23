@@ -28,8 +28,8 @@ DATABASES = {
         'NAME': '{{ db_name }}',
         'USER': '{{ db_user }}',
         'PASSWORD': '{{ db_pwd }}',
-        'HOST': '',  # Empty for localhost through domain sockets
-        'PORT': '',  # Empty for default
+        'HOST': '127.0.0.1',
+        'PORT': '5432', 
     },
 }
 
@@ -55,12 +55,12 @@ FEEDS = (('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3))
 
 
 
-# Tous accés
-# paramétrer SSO en protect_uris
+# Tous acces
+# parametrer SSO en protect_uris
 # OU
-# Pas d'accès
+# Pas d'acces
 # hook
-# paramétrer SSO en protect_uris
+# parametrer SSO en protect_uris
 import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType
 AUTHENTICATION_BACKENDS = (
