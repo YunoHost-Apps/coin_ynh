@@ -70,6 +70,12 @@ AUTHENTICATION_BACKENDS = (
 )
 AUTH_LDAP_SERVER_URI = "ldap://localhost:389"
 AUTH_LDAP_USER_SEARCH = LDAPSearch("uid=YNH_APP_ARG_ADMIN,ou=users,dc=yunohost,dc=org", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+AUTH_LDAP_USER_ATTR_MAP = {
+    "username": "uid",
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail",
+}
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     "is_active": "cn=sftpusers,ou=groups,dc=yunohost,dc=org",
     "is_staff": "cn=sftpusers,ou=groups,dc=yunohost,dc=org",
