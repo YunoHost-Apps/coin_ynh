@@ -8,6 +8,7 @@ app=$YNH_APP_INSTANCE_NAME
 
 # Source YunoHost helpers
 . /usr/share/yunohost/helpers
+source ../settings/scripts/common.sh
 
 # Retrieve old app settings
 domain=$(ynh_app_setting_get "$app" domain)
@@ -17,6 +18,7 @@ email=$(ynh_app_setting_get "$app" email)
 isp_name=$(ynh_app_setting_get "$app" isp_name)
 isp_site=$(ynh_app_setting_get "$app" isp_site)
 secret=$(ynh_app_setting_get "$app" secret)
+db_pwd=$(ynh_app_setting_get "$app" psqlpassword)
 
 # Check domain/path availability
 sudo yunohost app checkurl $domain$path -a $app \
@@ -39,14 +41,16 @@ if [ -f $gunicorn_path ]; then
 fi
 
 # Dependences
-ynh_package_install python3-pip python3-virtualenv
+install_dependencies
 
 # Restore sources & data
 sudo cp -a ./sources $final_path
 
+# Create user
+useradd $app -d $final_path || echo "User already exists"
 
 # Set permissions
-sudo chown -R www-data:www-data $final_path
+sudo chown -R $app:www-data $final_path
 
 # Restore conf files
 sudo cp -a ./nginx.conf $conf
@@ -59,6 +63,13 @@ if ynh_user_exists $admin; then
     sudo yunohost app addaccess $app -u $admin
 fi
 
+# Restore database
+ynh_psql_test_if_first_run
+db_name=$app
+db_user=$app
+ynh_psql_create_db $db_name $db_user $db_pwd
+ynh_psql_execute_file_as_root "${YNH_CWD}/dump.sql" "$db_name"
+
 # Log folder
 sudo mkdir -p /var/log/$app
 sudo chown -R $app /var/log/$app
@@ -66,6 +77,7 @@ sudo chgrp -R www-data /var/log/$app
 
 # Reload Nginx
 sudo service nginx reload
+systemctl daemon-reload
 sudo systemctl start $app
 sudo systemctl enable $app
 sudo yunohost service add $app -l /var/log/gunicorn/$app.log
