@@ -79,7 +79,7 @@ export db_name=$(ynh_sanitize_dbid --db_name=$app)
 export db_user=$db_name
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
-export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+export db_pwd
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -128,8 +128,8 @@ virtualenv "$final_path/venv"
 
 export prefix="${path_url#"/"}/"
 prefix=${prefix%"/"}
-ynh_render_template ../conf/local.py.j2 "$final_path/app/settings_local.py"
-ynh_store_file_checksum --file="$final_path/app/settings_local.py"
+ynh_render_template ../conf/local.py.j2 "$final_path/coin/settings_local.py"
+ynh_store_file_checksum --file="$final_path/coin/settings_local.py"
 
 #=================================================
 # SERVE STATIC FILES IN PRODUCTION MODE
