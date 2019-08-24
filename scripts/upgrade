@@ -26,6 +26,8 @@ export secret=$(ynh_app_setting_get --app=$app --key=secret)
 export is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 export final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 export db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+export db_user=$db_name
+export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # CHECK VERSION
@@ -185,7 +187,7 @@ ynh_add_systemd_config
 #=================================================
 
 # Set permissions on app files
-chown -R root: $final_path
+chown -R $app:www-data $final_path
 
 #=================================================
 # SETUP SSOWAT

@@ -186,7 +186,7 @@ ynh_add_systemd_config
 ### that really need such authorization.
 
 # Set permissions to app files
-chown -R root: $final_path
+chown -R $app:www-data $final_path
 
 
 #=================================================
