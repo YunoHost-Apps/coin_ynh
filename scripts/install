@@ -127,7 +127,7 @@ virtualenv "$final_path/venv"
 
 export prefix="${path_url#"/"}/"
 prefix=${prefix%"/"}
-ynh_render_template ../conf/local.py.j2 "$final_path/app/setings_local.py"
+ynh_render_template ../conf/local.py.j2 "$final_path/app/settings_local.py"
 ynh_store_file_checksum --file="$final_path/app/settings_local.py"
 
 #=================================================
