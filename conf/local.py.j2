@@ -5,18 +5,18 @@ from settings_base import *
 
 DEBUG = TEMPLATE_DEBUG = False
 
-ALLOWED_HOSTS = ['YNH_APP_ARG_DOMAIN']
+ALLOWED_HOSTS = ['{{ domain }}']
 
-URL_PREFIX = 'YNH_APP_PREFIX'
-STATIC_ROOT = 'YNH_APP_STATIC_ROOT'
-NOTIFICATION_EMAILS = ['YNH_APP_ARG_EMAIL']
-DEFAULT_FROM_EMAIL = 'notifier@YNH_APP_ARG_DOMAIN'
-SITE_URL = "https://YNH_APP_ARG_DOMAINYNH_APP_ARG_PATH"
-SECRET_KEY = 'YNH_APP_SECRET_KEY'
+URL_PREFIX = '{{ prefix }}'
+STATIC_ROOT = '{{ final_path }}/static'
+NOTIFICATION_EMAILS = ['{{ email }}']
+DEFAULT_FROM_EMAIL = 'notifier@{{ domain }}'
+SITE_URL = "https://{{ domain }}{{ path_url }}"
+SECRET_KEY = '{{ secret }}'
 ISP = {
-    'NAME' : 'YNH_APP_ARG_ISP_NAME',
-    'SITE' : 'YNH_APP_ARG_ISP_SITE',
-    'EMAIL' : 'YNH_APP_ARG_EMAIL',
+    'NAME': '{{ isp_name }}',
+    'SITE': '{{ isp_site }}',
+    'EMAIL': '{{ email }}',
 }
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -25,16 +25,15 @@ PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'YNH_DB_NAME',
-        'USER': 'YNH_DB_USER',
-        'PASSWORD': 'YNH_DB_PASSWORD',
-        'HOST': '',  # Empty for localhost through domain sockets
-        'PORT': '',  # Empty for default
+        'NAME': '{{ db_name }}',
+        'USER': '{{ db_user }}',
+        'PASSWORD': '{{ db_pwd }}',
+        'HOST': '127.0.0.1',
+        'PORT': '5432', 
     },
 }
 
-FEEDS = (('isp', 'http://www.illyse.net/feed/', 3),
-         ('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3))
+FEEDS = (('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3),)
 
 
 
@@ -56,12 +55,12 @@ FEEDS = (('isp', 'http://www.illyse.net/feed/', 3),
 
 
 
-# Tous accés
-# paramétrer SSO en protect_uris
+# Tous acces
+# parametrer SSO en protect_uris
 # OU
-# Pas d'accès
+# Pas d'acces
 # hook
-# paramétrer SSO en protect_uris
+# parametrer SSO en protect_uris
 import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType
 AUTHENTICATION_BACKENDS = (
@@ -69,7 +68,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 AUTH_LDAP_SERVER_URI = "ldap://localhost:389"
-AUTH_LDAP_USER_SEARCH = LDAPSearch("uid=YNH_APP_ARG_ADMIN,ou=users,dc=yunohost,dc=org", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
+AUTH_LDAP_USER_SEARCH = LDAPSearch("uid={{ admin }},ou=users,dc=yunohost,dc=org", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
 AUTH_LDAP_USER_ATTR_MAP = {
     "username": "uid",
     "first_name": "givenName",
