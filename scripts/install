@@ -1,145 +1,229 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Source YunoHost helpers
+source _common.sh
 source /usr/share/yunohost/helpers
-source future.sh
-source common.sh
 
-app=$YNH_APP_INSTANCE_NAME
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
 
-# Retrieve arguments
-domain=$YNH_APP_ARG_DOMAIN
-#readonly path=$YNH_APP_ARG_PATH
-path=/
-
-readonly admin=$YNH_APP_ARG_ADMIN
-readonly email=$YNH_APP_ARG_EMAIL
-
-
-readonly isp_name=$YNH_APP_ARG_ISP_NAME
-readonly isp_site=$YNH_APP_ARG_ISP_SITE
-readonly secret=$(ynh_string_random 24) # A bug don't allow to do random string bigger than 24
-
-
-# Check if admin exists
-ynh_user_exists $admin \
-    || ynh_die "Wrong admin"
-
-function configure_app()
-{
-    # Check domain/path availability
-    ynh_webpath_register "$app" "$domain" "$path"
-
-    ynh_app_setting_set "$app" admin "$admin"
-    ynh_app_setting_set "$app" email "$email"
-    ynh_app_setting_set "$app" isp_name "$isp_name"
-    ynh_app_setting_set "$app" isp_site "$isp_site"
-    ynh_app_setting_set "$app" secret "$secret"
+ynh_clean_setup () {
+	### Remove this function if there's nothing to clean before calling the remove script.
+	read
 }
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
 
-function install_from_sources()
-{
-    $final_path/venv/bin/pip install "pip>=1.5.6"
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
 
+export domain=$YNH_APP_ARG_DOMAIN
+export path_url=/
+export admin=$YNH_APP_ARG_ADMIN
+export email=$YNH_APP_ARG_EMAIL
+export isp_name=$YNH_APP_ARG_ISP_NAME
+export isp_site=$YNH_APP_ARG_ISP_SITE
+is_public=1
+export secret=$(ynh_string_random 24)
+
+export app=$YNH_APP_INSTANCE_NAME
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+ynh_script_progression --message="Validating installation parameters..." --time --weight=1
+
+export final_path=/opt/$app
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
+
+# Register (book) web path
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+ynh_script_progression --message="Storing installation settings..." --time --weight=1
+
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=email --value=$email
+ynh_app_setting_set --app=$app --key=isp_name --value=$isp_name
+ynh_app_setting_set --app=$app --key=isp_site --value=$isp_site
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Installing dependencies..." --time --weight=1
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# CREATE DATABASE
+#=================================================
+ynh_script_progression --message="Creating a MySQL database..." --time --weight=1
+
+ynh_psql_test_if_first_run
+
+export db_name=$(ynh_sanitize_dbid --db_name=$app)
+export db_user=$db_name
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
+export db_pwd
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..." --time --weight=1
+
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring nginx web server..." --time --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --time --weight=1
+
+# Create a system user
+ynh_system_user_create --username=$app
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# PYTHON DEPENDENCIES
+#=================================================
+virtualenv "$final_path/venv"
+(
+	set +o nounset
+	source "${final_path}/venv/bin/activate"
+	set -o nounset
+	$final_path/venv/bin/pip install --upgrade pip
     $final_path/venv/bin/pip install gunicorn
     echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
     $final_path/venv/bin/pip install -r $final_path/requirements.txt
-    #$final_path/venv/bin/pip install mysqlclient
+)
 
-    prefix="${path#"/"}/"
-    prefix=${prefix%"/"}
-    # Configuration Django
-    sed -i "s@YNH_APP_ARG_ADMIN@$admin@g" ../conf/local.py
-    sed -i "s@YNH_APP_ARG_DOMAIN@$domain@g" ../conf/local.py
-    sed -i "s@YNH_APP_ARG_PATH@$path@g" ../conf/local.py
-    sed -i "s@YNH_APP_PREFIX@$prefix@g" ../conf/local.py
-    sed -i "s#YNH_APP_ARG_EMAIL#$email#g" ../conf/local.py
-    sed -i "s#YNH_APP_SECRET_KEY#$secret#g" ../conf/local.py
-    sed -i "s#YNH_APP_ARG_ISP_NAME#$isp_name#g" ../conf/local.py
-    sed -i "s#YNH_APP_ARG_ISP_SITE#$isp_site#g" ../conf/local.py
-    sed -i "s#YNH_APP_STATIC_ROOT#$final_path/static#g" ../conf/local.py
-    sed -i "s#YNH_DB_NAME#$db_name#g" ../conf/local.py
-    sed -i "s#YNH_DB_USER#$db_user#g" ../conf/local.py
-    sed -i "s#YNH_DB_PASSWORD#$db_pwd#g" ../conf/local.py
-    sudo cp ../conf/local.py $final_path/$app/settings_local.py
+#=================================================
+# CONFIGURATION DJANGO
+#=================================================
 
-    # Set production
-    sudo ln -s $final_path/$app/static $final_path/static
+export prefix="${path_url#"/"}/"
+prefix=${prefix%"/"}
+ynh_render_template ../conf/local.py.j2 "$final_path/coin/settings_local.py"
+ynh_store_file_checksum --file="$final_path/coin/settings_local.py"
 
-    # Set permissions
-    sudo useradd $app -d $final_path || echo "User already exists"
-    sudo chown -R $app:www-data $final_path
+#=================================================
+# SERVE STATIC FILES IN PRODUCTION MODE
+#=================================================
+ln -s $final_path/$app/static $final_path/static
 
+#=================================================
+# SETUP DATABASE
+#=================================================
+# Set permissions
+chown -R $app:www-data $final_path
 
-    pushd $final_path
-    $final_path/venv/bin/python manage.py migrate --noinput
-    $final_path/venv/bin/python manage.py collectstatic --noinput
-    popd 
-    # Set permissions to directory
-    sudo chown $app:www-data -R $final_path
-}
+pushd $final_path
+$final_path/venv/bin/python manage.py migrate --noinput
+$final_path/venv/bin/python manage.py collectstatic --noinput
+popd 
 
-function configure_log()
-{
-    # Log folder
-    sudo mkdir -p /var/log/$app
-    sudo chown -R $app /var/log/$app
-    sudo chgrp -R www-data /var/log/$app
-}
+# Set permissions to directory
+chown $app:www-data -R $final_path
 
-function configure_gunicorn()
-{
-    # Service gunicorn
-    sudo sed -i "s@YNH_APP_INSTANCE_NAME@$app@g" ../conf/gunicorn_config.py
-    sudo sed -i "s@YNH_APP_INSTANCE_NAME@$app@g" ../conf/gunicorn.service
-    sudo cp ../conf/gunicorn.service /etc/systemd/system/$app.service
-    sudo systemctl daemon-reload
-    sudo cp ../conf/gunicorn_config.py /opt/$app/
-    chown $app:www-data /opt/$app/gunicorn_config.py
-}
+#================================================
+# CONFIGURE LOG DIR
+#================================================
+mkdir -p /var/log/$app
+chown -R $app /var/log/$app
+chgrp -R www-data /var/log/$app
 
-function configure_nginx_and_ssowat()
-{
-    # Reload Nginx and regenerate SSOwat conf
-    sudo yunohost app addaccess $app -u $admin
+#================================================
+# SETUP GUNICORN
+#================================================
+ynh_replace_string --match_string="__YNH_APP_INSTANCE_NAME__" --replace_string="$app" --target_file="../conf/gunicorn_config.py"
+cp ../conf/gunicorn_config.py $final_path/
+ynh_store_file_checksum --file="$final_path/gunicorn_config.py"
 
-    # Modify Nginx configuration file and copy it to Nginx conf directory
-    sed -i "s@PATHTOCHANGE@$path@g" ../conf/nginx.conf
-    sed -i "s@ALIASTOCHANGE@$final_path/@g" ../conf/nginx.conf
-    sed -i "s@YNH_APP_INSTANCE_NAME@$app@g" ../conf/nginx.conf
-    sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
+chown $app:www-data $final_path/gunicorn_config.py
 
-    ## Reload Nginx and regenerate SSOwat conf
-    sudo service nginx reload
-    sudo systemctl start $app
-    sudo systemctl enable $app
-    sudo yunohost service add $app -l /var/log/gunicorn/$app.log
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+ynh_script_progression --message="Configuring a systemd service..." --time --weight=1
 
-    ynh_app_setting_set "$app" skipped_uris "/"
-    sudo yunohost app ssowatconf
-}
-
-configure_app
-install_dependencies
-init_db
+# Create a dedicated systemd config
+ynh_add_systemd_config
 
 
-    # Copy files to the right place
-    final_path=/opt/$app
-    ynh_setup_source $final_path
-    
-    # Install venv
-    pip install virtualenv
-    virtualenv $final_path/venv
-    set +o nounset 
-    source $final_path/venv/bin/activate
-    set -o nounset
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
+### For security reason, any app should set the permissions to root: before anything else.
+### Then, if write authorization is needed, any access should be given only to directories
+### that really need such authorization.
+
+# Set permissions to app files
+chown -R $app:www-data $final_path
 
 
-install_from_sources
-configure_log
-configure_gunicorn
-configure_nginx_and_ssowat
+#=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add $app --description "$app daemon" --log "/var/log/$app/$app.log"
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..." --time --weight=1
+
+# Start a systemd service
+ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
+
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# unprotected_uris allows SSO credentials to be passed anyway.
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+fi
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed" --time --last

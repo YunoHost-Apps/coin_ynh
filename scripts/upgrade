@@ -1,75 +1,222 @@
 #!/bin/bash
+
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
 source /usr/share/yunohost/helpers
-source common.sh
-source future.sh
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_script_progression --message="Loading installation settings..." --time --weight=1
 
 export app=$YNH_APP_INSTANCE_NAME
-user=$app
 
-export domain=$(ynh_app_setting_get $app domain)
-export path=$(ynh_app_setting_get $app path)
-export admin=$(ynh_app_setting_get $app admin)
-export email=$(ynh_app_setting_get $app email)
-export isp_name=$(ynh_app_setting_get $app isp_name)
-export isp_site=$(ynh_app_setting_get $app isp_site)
-export secret=$(ynh_app_setting_get $app secret)
-version=$(ynh_read_json "/etc/yunohost/apps/$app/manifest.json" 'version' 2> /dev/null || echo '20170408')
-last_version=$(ynh_read_manifest 'version')
+export domain=$(ynh_app_setting_get --app=$app --key=domain)
+export path_url=$(ynh_app_setting_get --app=$app --key=path)
+export admin=$(ynh_app_setting_get --app=$app --key=admin)
+export email=$(ynh_app_setting_get --app=$app --key=email)
+export isp_name=$(ynh_app_setting_get --app=$app --key=isp_name)
+export isp_site=$(ynh_app_setting_get --app=$app --key=isp_site)
+export secret=$(ynh_app_setting_get --app=$app --key=secret)
+export is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+export final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+export db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+export db_user=$db_name
+export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
-ynh_exit_if_up_to_date
-ynh_check_var "$app" "app name not set"
-ynh_user_exists "$admin" || err "User does not exist: $admin"
-ynh_normalize_url_path "$path"
+#=================================================
+# CHECK VERSION
+#=================================================
 
-#if [ "${version}" = "20170408" ]; then
-#fi
+### This helper will compare the version of the currently installed app and the version of the upstream package.
+### $upgrade_type can have 2 different values
+### - UPGRADE_APP if the upstream app version has changed
+### - UPGRADE_PACKAGE if only the YunoHost package has changed
+### ynh_check_app_version_changed will stop the upgrade if the app is up to date.
+### UPGRADE_APP should be used to upgrade the core app only if there's an upgrade to do.
+upgrade_type=$(ynh_check_app_version_changed)
 
-# Install new dependencies
-install_dependencies
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+ynh_script_progression --message="Ensuring downward compatibility..." --time --weight=1
 
-# Copy files to the right place
-final_path=/opt/$app
-[ -L ${final_path}/coin ] || ynh_setup_source $final_path
+# Fix is_public as a boolean value
+if [ "$is_public" = "Yes" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=1
+	is_public=1
+elif [ "$is_public" = "No" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=0
+	is_public=0
+fi
 
-set +o nounset 
-source $final_path/venv/bin/activate
-set -o nounset
-$final_path/venv/bin/pip install -r $final_path/requirements.txt
+# If db_name doesn't exist, create it
+if [ -z "$db_name" ]; then
+	db_name=$(ynh_sanitize_dbid --db_name=$app)
+	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+fi
 
-# Set permissions
-useradd $app -d $final_path || echo "User already exists"
+# If final_path doesn't exist, create it
+if [ -z "$final_path" ]; then
+	final_path=/opt/$app
+	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+#=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --time --weight=1
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Stopping a systemd service..." --time --weight=1
+
+ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --time --weight=1
+
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$final_path"
+fi
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Upgrading dependencies..." --time --weight=1
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..." --time --weight=1
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app
+
+#=================================================
+# SPECIFIC UPGRADE
+#=================================================
+# CONFIGURATION DJANGO
+#=================================================
+
+export prefix="${path_url#"/"}/"
+prefix=${prefix%"/"}
+ynh_backup_if_checksum_is_different --file="$final_path/app/settings_local.py"
+ynh_render_template ../conf/local.py.j2 "$final_path/app/setings_local.py"
+ynh_store_file_checksum --file="$final_path/app/settings_local.py"
+
+virtualenv "$final_path/venv"
+(
+	set +o nounset
+	source "${final_path}/venv/bin/activate"
+	set -o nounset
+    
+    #=================================================
+    # PYTHON DEPENDENCIES
+    #=================================================
+    echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
+    $final_path/venv/bin/pip install -r $final_path/requirements.txt
+    
+    #=================================================
+    # MIGRATE DB
+    #=================================================
+    $final_path/venv/bin/python manage.py migrate --noinput
+    
+    #=================================================
+    # COLLECT FILES
+    #=================================================
+    $final_path/venv/bin/python manage.py collectstatic --noinput
+)
+
+#=================================================
+
+#================================================
+# UPDATE GUNICORN
+#================================================
+ynh_backup_if_checksum_is_different --file="$final_path/gunicorn_config.py"
+ynh_replace_string --match_string="__YNH_APP_INSTANCE_NAME__" --replace_string="$app" --target_file="../conf/gunicorn_config.py"
+cp -f ../conf/gunicorn_config.py $final_path/
+ynh_store_file_checksum --file="$final_path/gunicorn_config.py"
+
+chown $app:www-data $final_path/gunicorn_config.py
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+ynh_script_progression --message="Upgrading systemd configuration..." --time --weight=1
+
+# Create a dedicated systemd config
+ynh_add_systemd_config
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
+# Set permissions on app files
 chown -R $app:www-data $final_path
 
-pushd $final_path
-if [ "${version}" = "20170731" ]; then
-    init_db
-    ynh_app_setting_delete $app mysqlpassword
-    $final_path/venv/bin/python manage.py dumpdata > /tmp/dump.json
-    
-    cat >> /opt/$app/coin/settings_local.py <<EOF
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '$db_name',
-        'USER': '$db_user',
-        'PASSWORD': '$db_pwd',
-        'HOST': '',  # Empty for localhost through domain sockets
-        'PORT': '',  # Empty for default
-    },
-}
-EOF
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Upgrading SSOwat configuration..." --time --weight=1
+
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# unprotected_uris allows SSO credentials to be passed anyway
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
 
-$final_path/venv/bin/python manage.py migrate --noinput
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
-if [ "${version}" = "20170731" ]; then
-    $final_path/venv/bin/python manage.py loaddata /tmp/dump.json
-fi
+ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
 
-$final_path/venv/bin/python manage.py collectstatic --noinput
-popd 
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
 
-# Set permissions to directory
-chown $app:www-data -R $final_path
+ynh_systemd_action --service_name=nginx --action=reload
 
-[ -L ${final_path}/coin ] || service coin restart
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Upgrade of $app completed" --time --last
