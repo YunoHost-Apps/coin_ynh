@@ -43,7 +43,7 @@
             },
             {
                 "name": "email",
-                "type": "email",
+                "type": "string",
                 "ask": {
                     "en": "Choose email were send notification",
                     "fr": "Choisissez l'email vers lequel envoyer les notifications"
@@ -52,6 +52,7 @@
             },
             {
                 "name": "isp_name",
+                "type": "string",
                 "ask": {
                     "en": "Enter your ISP name",
                     "fr": "Indiquez le nom de votre FAI"
@@ -60,6 +61,7 @@
             },
             {
                 "name": "isp_site",
+                "type": "string",
                 "ask": {
                     "en": "Enter the address of your ISP website",
                     "fr": "Saisissez l'adresse du siteweb de votre FAI"
