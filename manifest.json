@@ -14,9 +14,9 @@
     },
     "url": "https://code.ffdn.org/FFDN/coin/",
     "requirements": {
-        "yunohost": ">= 3.6"
+        "yunohost": ">= 4.0"
     },
-    "version": "20200219~ynh1",
+    "version": "20200630~ynh1",
     "multi_instance": true,
     "services": [
         "nginx"
