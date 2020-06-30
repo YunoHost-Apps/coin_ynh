@@ -111,6 +111,8 @@ ynh_system_user_create --username=$app
 #=================================================
 # PYTHON DEPENDENCIES
 #=================================================
+
+ynh_script_progression --message="Installing more dependencies..."
 virtualenv "$final_path/venv"
 (
 	set +o nounset
@@ -125,6 +127,8 @@ virtualenv "$final_path/venv"
 #=================================================
 # CONFIGURATION DJANGO
 #=================================================
+
+ynh_script_progression --message="Configuring application..."
 
 export prefix="${path_url#"/"}/"
 prefix=${prefix%"/"}
