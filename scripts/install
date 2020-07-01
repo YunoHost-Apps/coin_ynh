@@ -13,10 +13,6 @@ source /usr/share/yunohost/helpers
 # MANAGE SCRIPT FAILURE
 #=================================================
 
-ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
-	read
-}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
@@ -24,16 +20,15 @@ ynh_abort_if_errors
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
+export app=$YNH_APP_INSTANCE_NAME
 export domain=$YNH_APP_ARG_DOMAIN
 export path_url=/
 export admin=$YNH_APP_ARG_ADMIN
-export email=$YNH_APP_ARG_EMAIL
-export isp_name=$YNH_APP_ARG_ISP_NAME
-export isp_site=$YNH_APP_ARG_ISP_SITE
+export email=$admin@$domain
+export isp_name=ARN
+export isp_site="https://arn-fai.net"
 is_public=1
 export secret=$(ynh_string_random 24)
-
-export app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -87,8 +82,8 @@ export db_pwd
 ynh_script_progression --message="Setting up source files..."
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path"
+
+git clone https://code.ffdn.org/arn/coin --branch $branch $final_path
 
 #=================================================
 # NGINX CONFIGURATION

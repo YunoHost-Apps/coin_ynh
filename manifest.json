@@ -1,6 +1,6 @@
 {
     "name": "Coin",
-    "id": "coin",
+    "id": "arncoin",
     "packaging_format": 1,
     "description": {
         "en": "Member dashboard for non profit isp.",
@@ -8,15 +8,13 @@
     },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
-        "name": "ljf",
-        "email": "ljf+coin_ynh@grimaud.me",
-        "url": "https://www.arn-fai.net"
+        "name": "alexAubin"
     },
-    "url": "https://code.ffdn.org/FFDN/coin/",
+    "url": "https://code.ffdn.org/ARN/coin/",
     "requirements": {
         "yunohost": ">= 4.0"
     },
-    "version": "20200630~ynh1",
+    "version": "20200701~ynh1",
     "multi_instance": true,
     "services": [
         "nginx"
@@ -42,31 +40,12 @@
                 "example": "johndoe"
             },
             {
-                "name": "email",
+                "name": "branch",
                 "type": "string",
                 "ask": {
-                    "en": "Choose email were send notification",
-                    "fr": "Choisissez l'email vers lequel envoyer les notifications"
+                    "en": "Specify the upstream branch to use when setting up the repo"
                 },
-                "example": "admin@example.tld"
-            },
-            {
-                "name": "isp_name",
-                "type": "string",
-                "ask": {
-                    "en": "Enter your ISP name",
-                    "fr": "Indiquez le nom de votre FAI"
-                },
-                "example": "My ISP"
-            },
-            {
-                "name": "isp_site",
-                "type": "string",
-                "ask": {
-                    "en": "Enter the address of your ISP website",
-                    "fr": "Saisissez l'adresse du siteweb de votre FAI"
-                },
-                "example": "//www.exemple.tld"
+                "default": "arn-prod"
             }
         ]
     }
