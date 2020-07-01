@@ -24,6 +24,7 @@ export app=$YNH_APP_INSTANCE_NAME
 export domain=$YNH_APP_ARG_DOMAIN
 export path_url=/
 export admin=$YNH_APP_ARG_ADMIN
+export branch=$YNH_APP_ARG_BRANCH
 export email=$admin@$domain
 export isp_name=ARN
 export isp_site="https://arn-fai.net"
