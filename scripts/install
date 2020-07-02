@@ -134,7 +134,7 @@ ynh_store_file_checksum --file="$final_path/coin/settings_local.py"
 #=================================================
 # SERVE STATIC FILES IN PRODUCTION MODE
 #=================================================
-ln -s $final_path/$app/static $final_path/static
+ln -s $final_path/coin/static $final_path/static
 
 #=================================================
 # SETUP DATABASE
@@ -143,6 +143,7 @@ ln -s $final_path/$app/static $final_path/static
 chown -R $app:www-data $final_path
 
 pushd $final_path
+rm -rf coin/billing/migrations/00*.py # FIXME : fix the damn migrations instead of doing this ...
 $final_path/venv/bin/python manage.py makemigrations --noinput
 $final_path/venv/bin/python manage.py migrate --noinput
 $final_path/venv/bin/python manage.py collectstatic --noinput
