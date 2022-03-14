@@ -113,13 +113,14 @@ ynh_add_nginx_config
 #=================================================
 # PYTHON DEPENDENCIES
 #=================================================
-
 ynh_script_progression --message="Installing more dependencies..."
+
 virtualenv "$final_path/venv"
 (
 	set +o nounset
 	source "${final_path}/venv/bin/activate"
 	set -o nounset
+
 	$final_path/venv/bin/pip install --upgrade pip
     $final_path/venv/bin/pip install gunicorn
     echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
@@ -129,7 +130,6 @@ virtualenv "$final_path/venv"
 #=================================================
 # CONFIGURATION DJANGO
 #=================================================
-
 ynh_script_progression --message="Configuring application..."
 
 export prefix="${path_url#"/"}/"
@@ -150,9 +150,9 @@ ln -s $final_path/$app/static $final_path/static
 chown -R $app:www-data $final_path
 
 pushd $final_path
-$final_path/venv/bin/python manage.py migrate --noinput
-$final_path/venv/bin/python manage.py collectstatic --noinput
-popd 
+	$final_path/venv/bin/python manage.py migrate --noinput
+	$final_path/venv/bin/python manage.py collectstatic --noinput
+popd
 
 # Set permissions to directory
 chmod 750 "$final_path"

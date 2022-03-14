@@ -125,14 +125,15 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# CONFIGURATION DJANGO
+# CONFIGURE DJANGO
 #=================================================
+ynh_script_progression --message="Configuring Django..."
 
 export prefix="${path_url#"/"}/"
 prefix=${prefix%"/"}
-ynh_backup_if_checksum_is_different --file="$final_path/app/settings_local.py"
-ynh_render_template ../conf/local.py.j2 "$final_path/app/setings_local.py"
-ynh_store_file_checksum --file="$final_path/app/settings_local.py"
+ynh_backup_if_checksum_is_different --file="$final_path/coin/settings_local.py"
+ynh_render_template ../conf/local.py.j2 "$final_path/coin/setings_local.py"
+ynh_store_file_checksum --file="$final_path/coin/settings_local.py"
 
 virtualenv "$final_path/venv"
 (
@@ -143,18 +144,26 @@ virtualenv "$final_path/venv"
     #=================================================
     # PYTHON DEPENDENCIES
     #=================================================
+    ynh_script_progression --message="Installing more dependencies..."
+
     echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
     $final_path/venv/bin/pip install -r $final_path/requirements.txt
     
     #=================================================
     # MIGRATE DB
     #=================================================
-    $final_path/venv/bin/python manage.py migrate --noinput
+    ynh_script_progression --message="Migrating database..."
+
+    pushd $final_path
+    	$final_path/venv/bin/python manage.py migrate --noinput
     
     #=================================================
     # COLLECT FILES
     #=================================================
-    $final_path/venv/bin/python manage.py collectstatic --noinput
+    ynh_script_progression --message="Collecting files..."
+
+    	$final_path/venv/bin/python manage.py collectstatic --noinput
+    popd
 )
 
 chmod 750 "$final_path"
