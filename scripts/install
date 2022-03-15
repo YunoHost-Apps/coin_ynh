@@ -14,8 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
-	read
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -53,7 +52,6 @@ ynh_script_progression --message="Storing installation settings..."
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=email --value=$email
 ynh_app_setting_set --app=$app --key=isp_name --value=$isp_name
@@ -69,9 +67,17 @@ ynh_script_progression --message="Installing dependencies..."
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# CREATE DATABASE
+# CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Creating a MySQL database..."
+ynh_script_progression --message="Configuring system user..."
+
+# Create a system user
+ynh_system_user_create --username=$app
+
+#=================================================
+# CREATE A POSTGRESQL DATABASE
+#=================================================
+ynh_script_progression --message="Creating a PostgreSQL database..."
 
 ynh_psql_test_if_first_run
 
@@ -79,7 +85,7 @@ export db_name=$(ynh_sanitize_dbid --db_name=$app)
 export db_user=$db_name
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
-export db_pwd
+export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -90,34 +96,31 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path"
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..."
+ynh_script_progression --message="Configuring NGINX web server..."
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..."
-
-# Create a system user
-ynh_system_user_create --username=$app
 
 #=================================================
 # SPECIFIC SETUP
 #=================================================
 # PYTHON DEPENDENCIES
 #=================================================
-
 ynh_script_progression --message="Installing more dependencies..."
+
 virtualenv "$final_path/venv"
 (
 	set +o nounset
 	source "${final_path}/venv/bin/activate"
 	set -o nounset
+
 	$final_path/venv/bin/pip install --upgrade pip
     $final_path/venv/bin/pip install gunicorn
     echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
@@ -127,7 +130,6 @@ virtualenv "$final_path/venv"
 #=================================================
 # CONFIGURATION DJANGO
 #=================================================
-
 ynh_script_progression --message="Configuring application..."
 
 export prefix="${path_url#"/"}/"
@@ -138,6 +140,7 @@ ynh_store_file_checksum --file="$final_path/coin/settings_local.py"
 #=================================================
 # SERVE STATIC FILES IN PRODUCTION MODE
 #=================================================
+
 ln -s $final_path/$app/static $final_path/static
 
 #=================================================
@@ -147,28 +150,31 @@ ln -s $final_path/$app/static $final_path/static
 chown -R $app:www-data $final_path
 
 pushd $final_path
-$final_path/venv/bin/python manage.py migrate --noinput
-$final_path/venv/bin/python manage.py collectstatic --noinput
-popd 
+	$final_path/venv/bin/python manage.py migrate --noinput
+	$final_path/venv/bin/python manage.py collectstatic --noinput
+popd
 
 # Set permissions to directory
-chown $app:www-data -R $final_path
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #================================================
 # CONFIGURE LOG DIR
 #================================================
+
 mkdir -p /var/log/$app
 chown -R $app /var/log/$app
-chgrp -R www-data /var/log/$app
+chown -R $app:www-data "/var/log/$app"
 
 #================================================
-# SETUP GUNICORN
-#================================================
-ynh_replace_string --match_string="__YNH_APP_INSTANCE_NAME__" --replace_string="$app" --target_file="../conf/gunicorn_config.py"
-cp ../conf/gunicorn_config.py $final_path/
-ynh_store_file_checksum --file="$final_path/gunicorn_config.py"
+# ADD A CONFIGURATION
+#=================================================
+ynh_script_progression --message="Adding a configuration file..."
 
-chown $app:www-data $final_path/gunicorn_config.py
+ynh_add_config --template="../conf/gunicorn_config.py" --destination="$final_path/gunicorn_config.py"
+
+chown $app:www-data "$final_path/gunicorn_config.py"
 
 #=================================================
 # SETUP SYSTEMD
@@ -178,26 +184,14 @@ ynh_script_progression --message="Configuring a systemd service..."
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
-
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-# SECURE FILES AND DIRECTORIES
+# INTEGRATE SERVICE IN YUNOHOST
 #=================================================
+ynh_script_progression --message="Integrating service in YunoHost..."
 
-### For security reason, any app should set the permissions to root: before anything else.
-### Then, if write authorization is needed, any access should be given only to directories
-### that really need such authorization.
-
-# Set permissions to app files
-chown -R $app:www-data $final_path
-
-
-#=================================================
-# ADVERTISE SERVICE IN ADMIN PANEL
-#=================================================
-
-yunohost service add $app --description "$app daemon" --log "/var/log/$app/$app.log"
+yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -210,19 +204,20 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..."
+ynh_script_progression --message="Configuring permissions..."
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+	# Everyone can access the app.
+	# The "main" permission is automatically created before the install script.
+	ynh_permission_update --permission="main" --add="visitors"
 fi
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -230,4 +225,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression --message="Installation of $app completed"

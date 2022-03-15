@@ -6,17 +6,22 @@
         "en": "Member dashboard for non profit isp.",
         "fr": "Coin est un Outil pour un Internet Neutre."
     },
+    "version": "20200630~ynh1",
+    "url": "https://code.ffdn.org/FFDN/coin/",
+    "upstream": {
+        "license": "AGPL-3.0-or-later",
+        "website": "https://code.ffdn.org/FFDN/coin",
+        "code": "https://code.ffdn.org/ffdn/coin"
+    },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "ljf",
         "email": "ljf+coin_ynh@grimaud.me",
         "url": "https://www.arn-fai.net"
     },
-    "url": "https://code.ffdn.org/FFDN/coin/",
     "requirements": {
-        "yunohost": ">= 4.0"
+        "yunohost": ">= 4.3.0"
     },
-    "version": "20200630~ynh1",
     "multi_instance": true,
     "services": [
         "nginx"
@@ -25,21 +30,11 @@
         "install" : [
             {
                 "name": "domain",
-                "type": "domain",
-                "ask": {
-                    "en": "Choose a domain for Coin",
-                    "fr": "Choisissez un nom de domaine pour Coin"
-                },
-                "example": "domain.org"
+                "type": "domain"
             },
             {
                 "name": "admin",
-                "type": "user",
-                "ask": {
-                    "en": "Choose the Coin administrator (must be an existing YunoHost user)",
-                    "fr": "Choisissez l'administrateur de Coin (doit être un utilisateur YunoHost)"
-                },
-                "example": "johndoe"
+                "type": "user"
             },
             {
                 "name": "email",
