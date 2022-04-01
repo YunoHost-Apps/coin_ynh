@@ -14,7 +14,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 COIN is an Information System designed for associative ISPs in the FFDN.
 
 
-**Version incluse :** 20200630~ynh1
+**Version incluse :** 20220401~ynh1
 
 
 
