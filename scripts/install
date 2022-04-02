@@ -146,6 +146,7 @@ ln -s $final_path/$app/static $final_path/static
 #=================================================
 # SETUP DATABASE
 #=================================================
+
 # Set permissions
 chown -R $app:www-data $final_path
 

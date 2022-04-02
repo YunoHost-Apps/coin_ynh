@@ -6,7 +6,7 @@
         "en": "Member dashboard for non profit isp.",
         "fr": "Coin est un Outil pour un Internet Neutre."
     },
-    "version": "20200630~ynh1",
+    "version": "20220401~ynh1",
     "url": "https://code.ffdn.org/FFDN/coin/",
     "upstream": {
         "license": "AGPL-3.0-or-later",
