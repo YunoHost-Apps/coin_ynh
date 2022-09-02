@@ -1,4 +1,4 @@
-command = '/opt/__APP__/venv/bin/gunicorn'
+command = '__YNH_PYTHON_PATH__/gunicorn'
 pythonpath = '/opt/__APP__'
 workers = 4
 user = '__APP__'

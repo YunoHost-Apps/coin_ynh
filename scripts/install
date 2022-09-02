@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_install_python
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -14,7 +15,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	ynh_clean_check_starting
+	true
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -37,7 +38,7 @@ export app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_script_progression --message="Validating installation parameters..."
+ynh_script_progression --message="Validating installation parameters..." --weight=1
 
 export final_path=/opt/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
@@ -48,7 +49,7 @@ ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_script_progression --message="Storing installation settings..."
+ynh_script_progression --message="Storing installation settings..." --weight=1
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
@@ -62,14 +63,15 @@ ynh_app_setting_set --app=$app --key=isp_site --value=$isp_site
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing dependencies..."
+ynh_script_progression --message="Installing dependencies..." --weight=1
 
 ynh_install_app_dependencies $pkg_dependencies
+ynh_install_python --python_version=$python_version
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Configuring system user..."
+ynh_script_progression --message="Configuring system user..." --weight=1
 
 # Create a system user
 ynh_system_user_create --username=$app
@@ -77,7 +79,7 @@ ynh_system_user_create --username=$app
 #=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Creating a PostgreSQL database..."
+ynh_script_progression --message="Creating a PostgreSQL database..." --weight=1
 
 ynh_psql_test_if_first_run
 
@@ -90,7 +92,7 @@ export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..."
+ynh_script_progression --message="Setting up source files..." --weight=1
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
@@ -103,7 +105,7 @@ chown -R $app:www-data "$final_path"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring NGINX web server..."
+ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
@@ -113,24 +115,20 @@ ynh_add_nginx_config
 #=================================================
 # PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing more dependencies..."
+ynh_script_progression --message="Installing more dependencies..." --weight=1
 
-virtualenv "$final_path/venv"
-(
-	set +o nounset
-	source "${final_path}/venv/bin/activate"
-	set -o nounset
-
-	$final_path/venv/bin/pip install --upgrade pip
-    $final_path/venv/bin/pip install gunicorn
+pushd "$final_path"
+	ynh_use_python
+	ynh_exec_warn_less $ynh_pip install --upgrade pip
+    ynh_exec_warn_less $ynh_pip install gunicorn
     echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
-    $final_path/venv/bin/pip install -r $final_path/requirements.txt
-)
+    ynh_exec_warn_less $ynh_pip install -r $final_path/requirements.txt
+popd
 
 #=================================================
 # CONFIGURATION DJANGO
 #=================================================
-ynh_script_progression --message="Configuring application..."
+ynh_script_progression --message="Configuring application..." --weight=1
 
 export prefix="${path_url#"/"}/"
 prefix=${prefix%"/"}
@@ -151,8 +149,8 @@ ln -s $final_path/$app/static $final_path/static
 chown -R $app:www-data $final_path
 
 pushd $final_path
-	$final_path/venv/bin/python manage.py migrate --noinput
-	$final_path/venv/bin/python manage.py collectstatic --noinput
+	ynh_exec_warn_less $ynh_python manage.py migrate --noinput
+	ynh_exec_warn_less $ynh_python manage.py collectstatic --noinput
 popd
 
 # Set permissions to directory
@@ -171,7 +169,7 @@ chown -R $app:www-data "/var/log/$app"
 #================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a configuration file..."
+ynh_script_progression --message="Adding a configuration file..." --weight=1
 
 ynh_add_config --template="../conf/gunicorn_config.py" --destination="$final_path/gunicorn_config.py"
 
@@ -180,7 +178,7 @@ chown $app:www-data "$final_path/gunicorn_config.py"
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Configuring a systemd service..."
+ynh_script_progression --message="Configuring a systemd service..." --weight=1
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
@@ -190,14 +188,14 @@ ynh_add_systemd_config
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..."
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
 yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..."
+ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
@@ -205,7 +203,7 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring permissions..."
+ynh_script_progression --message="Configuring permissions..." --weight=1
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
@@ -218,7 +216,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..."
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -226,4 +224,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed"
+ynh_script_progression --message="Installation of $app completed" --last

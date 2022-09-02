@@ -7,12 +7,13 @@
 #=================================================
 
 source _common.sh
+source ynh_install_python
 source /usr/share/yunohost/helpers
 
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..."
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 export app=$YNH_APP_INSTANCE_NAME
 
@@ -31,19 +32,18 @@ export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 #=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..."
+ynh_script_progression --message="Checking version..." --weight=1
 
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
-	ynh_clean_check_starting
 	# Restore it if the upgrade fails
 	ynh_restore_upgradebackup
 }
@@ -55,14 +55,14 @@ ynh_abort_if_errors
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..."
+ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression --message="Ensuring downward compatibility..."
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
 # Cleaning legacy permissions
 if ynh_legacy_permissions_exists; then
@@ -86,7 +86,7 @@ fi
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
 
 # Create a dedicated user (if not existing)
 ynh_system_user_create --username=$app
@@ -97,7 +97,7 @@ ynh_system_user_create --username=$app
 
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-	ynh_script_progression --message="Upgrading source files..."
+	ynh_script_progression --message="Upgrading source files..." --weight=1
 
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$final_path"
@@ -108,26 +108,27 @@ chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
 #=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Upgrading dependencies..." --weight=1
+
+ynh_install_app_dependencies $pkg_dependencies
+ynh_install_python --python_version=$python_version
+
+#=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading NGINX web server configuration..."
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Upgrading dependencies..."
-
-ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
 # CONFIGURE DJANGO
 #=================================================
-ynh_script_progression --message="Configuring Django..."
+ynh_script_progression --message="Configuring Django..." --weight=1
 
 export prefix="${path_url#"/"}/"
 prefix=${prefix%"/"}
@@ -135,36 +136,31 @@ ynh_backup_if_checksum_is_different --file="$final_path/coin/settings_local.py"
 ynh_render_template ../conf/local.py.j2 "$final_path/coin/setings_local.py"
 ynh_store_file_checksum --file="$final_path/coin/settings_local.py"
 
-virtualenv "$final_path/venv"
-(
-	set +o nounset
-	source "${final_path}/venv/bin/activate"
-	set -o nounset
+pushd "$final_path"
+	ynh_use_python
     
     #=================================================
     # PYTHON DEPENDENCIES
     #=================================================
-    ynh_script_progression --message="Installing more dependencies..."
+    ynh_script_progression --message="Installing more dependencies..." --weight=1
 
     echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
-    $final_path/venv/bin/pip install -r $final_path/requirements.txt
+    ynh_exec_warn_less $ynh_pip install -r $final_path/requirements.txt
     
     #=================================================
     # MIGRATE DB
     #=================================================
-    ynh_script_progression --message="Migrating database..."
+    ynh_script_progression --message="Migrating database..." --weight=1
 
-    pushd $final_path
-    	$final_path/venv/bin/python manage.py migrate --noinput
+    ynh_exec_warn_less $ynh_python manage.py migrate --noinput
     
     #=================================================
     # COLLECT FILES
     #=================================================
-    ynh_script_progression --message="Collecting files..."
+    ynh_script_progression --message="Collecting files..." --weight=1
 
-    	$final_path/venv/bin/python manage.py collectstatic --noinput
-    popd
-)
+    ynh_exec_warn_less $ynh_python manage.py collectstatic --noinput
+popd
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
@@ -173,7 +169,7 @@ chown -R $app:www-data "$final_path"
 #================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..."
+ynh_script_progression --message="Updating a configuration file..." --weight=1
 
 ynh_add_config --template="../conf/gunicorn_config.py" --destination="$final_path/gunicorn_config.py"
 
@@ -182,7 +178,7 @@ chown $app:www-data "$final_path/gunicorn_config.py"
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Upgrading systemd configuration..."
+ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
@@ -192,21 +188,21 @@ ynh_add_systemd_config
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..."
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
 yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..."
+ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..."
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -214,4 +210,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed"
+ynh_script_progression --message="Upgrade of $app completed" --last

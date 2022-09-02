@@ -6,7 +6,7 @@
 	    email="john@example.com"
         isp_name="ARN"
         isp_site="https://arn-fai.net"
-    ; Checks
+	; Checks
 		pkg_linter=1
 		setup_sub_dir=0
 		setup_root=1
