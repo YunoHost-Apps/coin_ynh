@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # Coin for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/coin.svg)](https://dash.yunohost.org/appci/app/coin) ![](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/coin.svg)](https://dash.yunohost.org/appci/app/coin) ![Working status](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)  
 [![Install Coin with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -21,27 +21,27 @@ COIN is an Information System designed for associative ISPs in the FFDN.
 **Shipped version:** 20220401~ynh1
 
 
-
 ## Screenshots
 
-![](./doc/screenshots/user-subscriptions.png)
+![Screenshot of Coin](./doc/screenshots/user-subscriptions.png)
 
 ## Documentation and resources
 
-* Official app website: https://code.ffdn.org/FFDN/coin
-* Upstream app code repository: https://code.ffdn.org/ffdn/coin
-* YunoHost documentation for this app: https://yunohost.org/app_coin
-* Report a bug: https://github.com/YunoHost-Apps/coin_ynh/issues
+* Official app website: <https://code.ffdn.org/FFDN/coin>
+* Upstream app code repository: <https://code.ffdn.org/ffdn/coin>
+* YunoHost documentation for this app: <https://yunohost.org/app_coin>
+* Report a bug: <https://github.com/YunoHost-Apps/coin_ynh/issues>
 
 ## Developer info
 
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/coin_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
-```
+
+``` bash
 sudo yunohost app install https://github.com/YunoHost-Apps/coin_ynh/tree/testing --debug
 or
 sudo yunohost app upgrade coin -u https://github.com/YunoHost-Apps/coin_ynh/tree/testing --debug
 ```
 
-**More info regarding app packaging:** https://yunohost.org/packaging_apps
+**More info regarding app packaging:** <https://yunohost.org/packaging_apps>
