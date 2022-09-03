@@ -83,6 +83,8 @@ if [ -z "$final_path" ]; then
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
+ynh_secure_remove --file="${final_path}/venv"
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -136,31 +138,34 @@ ynh_backup_if_checksum_is_different --file="$final_path/coin/settings_local.py"
 ynh_render_template ../conf/local.py.j2 "$final_path/coin/setings_local.py"
 ynh_store_file_checksum --file="$final_path/coin/settings_local.py"
 
+#=================================================
+# PYTHON DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Installing more dependencies..." --weight=1
+
 pushd "$final_path"
 	ynh_use_python
-	
-	#=================================================
-	# PYTHON DEPENDENCIES
-	#=================================================
-	ynh_script_progression --message="Installing more dependencies..." --weight=1
-
 	ynh_exec_warn_less $ynh_pip install --upgrade pip
 	ynh_exec_warn_less $ynh_pip install gunicorn
 	echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
 	ynh_exec_warn_less $ynh_pip install -r $final_path/requirements.txt
-	
-	#=================================================
-	# MIGRATE DB
-	#=================================================
-	ynh_script_progression --message="Migrating database..." --weight=1
+popd
 
+#=================================================
+# MIGRATE DB
+#=================================================
+ynh_script_progression --message="Migrating database..." --weight=1
+
+pushd "$final_path"
 	ynh_exec_warn_less $ynh_python manage.py migrate --noinput
-	
-	#=================================================
-	# COLLECT FILES
-	#=================================================
-	ynh_script_progression --message="Collecting files..." --weight=1
+popd
 
+#=================================================
+# COLLECT FILES
+#=================================================
+ynh_script_progression --message="Collecting files..." --weight=1
+
+pushd "$final_path"
 	ynh_exec_warn_less $ynh_python manage.py collectstatic --noinput
 popd
 
