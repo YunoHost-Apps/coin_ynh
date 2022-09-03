@@ -105,9 +105,9 @@ ynh_script_progression --message="Installing more dependencies..." --weight=1
 pushd "$final_path"
 	ynh_use_python
 	ynh_exec_warn_less $ynh_pip install --upgrade pip
-    ynh_exec_warn_less $ynh_pip install gunicorn
-    echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
-    ynh_exec_warn_less $ynh_pip install -r $final_path/requirements.txt
+	ynh_exec_warn_less $ynh_pip install gunicorn
+	echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
+	ynh_exec_warn_less $ynh_pip install -r $final_path/requirements.txt
 popd
 
 #=================================================
