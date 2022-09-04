@@ -15,19 +15,19 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression --message="Loading installation settings..." --weight=1
 
-export app=$YNH_APP_INSTANCE_NAME
+app=$YNH_APP_INSTANCE_NAME
 
-export domain=$(ynh_app_setting_get --app=$app --key=domain)
-export path_url=$(ynh_app_setting_get --app=$app --key=path)
-export admin=$(ynh_app_setting_get --app=$app --key=admin)
-export email=$(ynh_app_setting_get --app=$app --key=email)
-export isp_name=$(ynh_app_setting_get --app=$app --key=isp_name)
-export isp_site=$(ynh_app_setting_get --app=$app --key=isp_site)
-export secret=$(ynh_app_setting_get --app=$app --key=secret)
-export final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-export db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-export db_user=$db_name
-export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+admin=$(ynh_app_setting_get --app=$app --key=admin)
+email=$(ynh_app_setting_get --app=$app --key=email)
+isp_name=$(ynh_app_setting_get --app=$app --key=isp_name)
+isp_site=$(ynh_app_setting_get --app=$app --key=isp_site)
+secret=$(ynh_app_setting_get --app=$app --key=secret)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # CHECK VERSION
@@ -132,7 +132,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Configuring Django..." --weight=1
 
-export prefix="${path_url#"/"}/"
+prefix="${path_url#"/"}/"
 prefix=${prefix%"/"}
 ynh_backup_if_checksum_is_different --file="$final_path/coin/settings_local.py"
 ynh_render_template ../conf/local.py.j2 "$final_path/coin/setings_local.py"

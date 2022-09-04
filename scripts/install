@@ -24,23 +24,23 @@ ynh_abort_if_errors
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-export domain=$YNH_APP_ARG_DOMAIN
-export path_url=/
-export admin=$YNH_APP_ARG_ADMIN
-export email=$YNH_APP_ARG_EMAIL
-export isp_name=$YNH_APP_ARG_ISP_NAME
-export isp_site=$YNH_APP_ARG_ISP_SITE
+domain=$YNH_APP_ARG_DOMAIN
+path_url=/
+admin=$YNH_APP_ARG_ADMIN
+email=$YNH_APP_ARG_EMAIL
+isp_name=$YNH_APP_ARG_ISP_NAME
+isp_site=$YNH_APP_ARG_ISP_SITE
 is_public=1
-export secret=$(ynh_string_random 24)
+secret=$(ynh_string_random 24)
 
-export app=$YNH_APP_INSTANCE_NAME
+app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 ynh_script_progression --message="Validating installation parameters..." --weight=1
 
-export final_path=/opt/$app
+final_path=/opt/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
@@ -81,12 +81,12 @@ ynh_system_user_create --username=$app
 #=================================================
 ynh_script_progression --message="Creating a PostgreSQL database..." --weight=1
 
-export db_name=$(ynh_sanitize_dbid --db_name=$app)
-export db_user=$db_name
+db_name=$(ynh_sanitize_dbid --db_name=$app)
+db_user=$db_name
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 ynh_psql_test_if_first_run
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
-export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -129,7 +129,7 @@ popd
 #=================================================
 ynh_script_progression --message="Configuring application..." --weight=1
 
-export prefix="${path_url#"/"}/"
+prefix="${path_url#"/"}/"
 prefix=${prefix%"/"}
 ynh_render_template ../conf/local.py.j2 "$final_path/coin/settings_local.py"
 ynh_store_file_checksum --file="$final_path/coin/settings_local.py"

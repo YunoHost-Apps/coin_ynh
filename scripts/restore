@@ -26,18 +26,18 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Loading installation settings..." --weight=1
 
-export app=$YNH_APP_INSTANCE_NAME
+app=$YNH_APP_INSTANCE_NAME
 
-export domain=$(ynh_app_setting_get --app=$app --key=domain)
-export path_url=$(ynh_app_setting_get --app=$app --key=path)
-export final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-export db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-export db_user=$db_name
-export admin=$(ynh_app_setting_get --app=$app --key=admin)
-export email=$(ynh_app_setting_get --app=$app --key=email)
-export isp_name=$(ynh_app_setting_get --app=$app --key=isp_name)
-export isp_site=$(ynh_app_setting_get --app=$app --key=isp_site)
-export secret=$(ynh_app_setting_get --app=$app --key=secret)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+admin=$(ynh_app_setting_get --app=$app --key=admin)
+email=$(ynh_app_setting_get --app=$app --key=email)
+isp_name=$(ynh_app_setting_get --app=$app --key=isp_name)
+isp_site=$(ynh_app_setting_get --app=$app --key=isp_site)
+secret=$(ynh_app_setting_get --app=$app --key=secret)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -91,7 +91,7 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 ynh_script_progression --message="Restoring the PostgreSQL database..." --weight=1
 
-export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 ynh_psql_test_if_first_run
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
