@@ -179,6 +179,7 @@ ynh_install_python () {
 
 	# Create shims directory if needed
 	mkdir -p "${pyenv_install_dir}/shims"
+	chmod -R a+w "${pyenv_install_dir}/shims"
 
 	# Restore /usr/local/bin in PATH
 	PATH=$CLEAR_PATH
