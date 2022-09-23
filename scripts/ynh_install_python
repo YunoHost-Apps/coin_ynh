@@ -1,11 +1,11 @@
 #!/bin/bash
 
 ynh_python_try_bash_extension() {
-  if [ -x src/configure ]; then
-	src/configure && make -C src || {
-	  ynh_print_info --message="Optional bash extension failed to build, but things will still work normally."
-	}
-  fi
+	if [ -x src/configure ]; then
+		src/configure && make -C src || {
+			ynh_print_info --message="Optional bash extension failed to build, but things will still work normally."
+		}
+	fi
 }
 
 pyenv_install_dir="/opt/pyenv"
@@ -33,24 +33,23 @@ pyenv_dependencies="make build-essential libssl-dev zlib1g-dev libbz2-dev librea
 # $PATH contains the path of the requested version of Python.
 # However, $PATH is duplicated into $ynh_python_path to outlast any manipulation of $PATH
 # You can use the variable `$ynh_python_load_path` to quickly load your Python version
-#  in $PATH for an usage into a separate script.
+# in $PATH for an usage into a separate script.
 # Exemple: $ynh_python_load_path $final_path/script_that_use_pip.sh`
 #
 #
 # Finally, to start a Python service with the correct version, 2 solutions
-#  Either the app is dependent of python or pip, but does not called it directly.
-#  In such situation, you need to load PATH
-#	`Environment="__YNH_PYTHON_LOAD_PATH__"`
-#	`ExecStart=__FINALPATH__/my_app`
-#	 You will replace __YNH_PYTHON_LOAD_PATH__ with $ynh_python_load_path
+# Either the app is dependent of python or pip, but does not called it directly.
+# In such situation, you need to load PATH
+# `Environment="__YNH_PYTHON_LOAD_PATH__"`
+# `ExecStart=__FINALPATH__/my_app`
+#  You will replace __YNH_PYTHON_LOAD_PATH__ with $ynh_python_load_path
 #
-#  Or Python start the app directly, then you don't need to load the PATH variable
-#	`ExecStart=__YNH_PYTHON__ my_app run`
-#	 You will replace __YNH_PYTHON__ with $ynh_python
-#
+# Or Python start the app directly, then you don't need to load the PATH variable
+# `ExecStart=__YNH_PYTHON__ my_app run`
+#  You will replace __YNH_PYTHON__ with $ynh_python
 #
 # one other variable is also available
-#   - $ynh_python_path: The absolute path to Python binaries for the chosen version.
+#  - $ynh_python_path: The absolute path to Python binaries for the chosen version.
 #
 # usage: ynh_use_python
 #
@@ -208,7 +207,7 @@ ynh_install_python () {
 	ynh_cleanup_python
 
 	# Set environment for Python users
-	echo  "#pyenv
+	echo	"#pyenv
 export PYENV_ROOT=$pyenv_install_dir
 export PATH=\"$pyenv_install_dir/bin:$PATH\"
 eval \"\$(pyenv init -)\"
