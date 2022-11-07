@@ -158,21 +158,6 @@ ynh_install_python () {
 		git clone -q https://github.com/pyenv/pyenv-virtualenv.git "${pyenv_install_dir}/plugins/pyenv-virtualenv"
 	fi
 
-	pyenv_latest="$(command -v "$pyenv_install_dir"/plugins/*/bin/pyenv-latest pyenv-latest | head -1)"
-	if [ -n "$pyenv_latest" ]; then
-		ynh_print_info --message="\`pyenv latest' command already available in \`$pyenv_latest'."
-		pushd "${pyenv_latest%/*/*}"
-			if git remote -v 2>/dev/null | grep "https://github.com/momo-lab/xxenv-latest.git"; then
-				ynh_print_info --message="Trying to update xxenv-latest with git..."
-				git pull -q origin master
-			fi
-		popd
-	else
-		ynh_print_info --message="Installing xxenv-latest with git..."
-		mkdir -p "${pyenv_install_dir}/plugins"
-		git clone -q https://github.com/momo-lab/xxenv-latest.git "${pyenv_install_dir}/plugins/xxenv-latest"
-	fi
-
 	# Enable caching
 	mkdir -p "${pyenv_install_dir}/cache"
 
@@ -187,9 +172,8 @@ ynh_install_python () {
 	# test -x /usr/bin/python_pyenv && mv /usr/bin/python_pyenv /usr/bin/python
 
 	# Install the requested version of Python
-	local final_python_version=$(pyenv latest --print $python_version)
 	ynh_print_info --message="Installation of Python-$python_version"
-	pyenv install --skip-existing $final_python_version > /dev/null 2>&1
+	pyenv install --skip-existing $python_version > /dev/null 2>&1
 
 	# Store python_version into the config of this app
 	ynh_app_setting_set --app=$YNH_APP_INSTANCE_NAME --key=python_version --value=$python_version
