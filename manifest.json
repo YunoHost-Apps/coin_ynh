@@ -3,8 +3,8 @@
     "id": "coin",
     "packaging_format": 1,
     "description": {
-        "en": "Member dashboard for non profit isp.",
-        "fr": "Coin est un Outil pour un Internet Neutre."
+        "en": "Member dashboard for non profit isp",
+        "fr": "Coin est un Outil pour un Internet Neutre"
     },
     "version": "20220401~ynh1",
     "url": "https://code.ffdn.org/FFDN/coin/",
