@@ -77,9 +77,9 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "email": "mail",
 }
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_active": "cn=sftpusers,ou=groups,dc=yunohost,dc=org",
-    "is_staff": "cn=sftpusers,ou=groups,dc=yunohost,dc=org",
-    "is_superuser": "cn=sftpusers,ou=groups,dc=yunohost,dc=org"
+    "is_active": "cn=admins,ou=groups,dc=yunohost,dc=org",
+    "is_staff": "cn=admins,ou=groups,dc=yunohost,dc=org",
+    "is_superuser": "cn=admins,ou=groups,dc=yunohost,dc=org"
 }
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=yunohost,dc=org", ldap.SCOPE_SUBTREE, "(objectClass=posixGroup)")
 AUTH_LDAP_GROUP_TYPE = PosixGroupType()
