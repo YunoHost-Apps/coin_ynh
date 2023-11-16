@@ -4,19 +4,19 @@ import os
 from settings_base import *
 
 DEBUG = TEMPLATE_DEBUG = False
-
-ALLOWED_HOSTS = ['YNH_APP_ARG_DOMAIN']
+''
+ALLOWED_HOSTS = ['__DOMAIN__']
 
 URL_PREFIX = 'YNH_APP_PREFIX'
 STATIC_ROOT = 'YNH_APP_STATIC_ROOT'
-NOTIFICATION_EMAILS = ['YNH_APP_ARG_EMAIL']
-DEFAULT_FROM_EMAIL = 'notifier@YNH_APP_ARG_DOMAIN'
-SITE_URL = "https://YNH_APP_ARG_DOMAINYNH_APP_ARG_PATH"
-SECRET_KEY = 'YNH_APP_SECRET_KEY'
+NOTIFICATION_EMAILS = ['__EMAIL__']
+DEFAULT_FROM_EMAIL = 'notifier@__DOMAIN__'
+SITE_URL = "https://__DOMAIN____PATH__"
+SECRET_KEY = '__SECRET__'
 ISP = {
-    'NAME' : 'YNH_APP_ARG_ISP_NAME',
-    'SITE' : 'YNH_APP_ARG_ISP_SITE',
-    'EMAIL' : 'YNH_APP_ARG_EMAIL',
+    'NAME' : '__ISP_NAME__',
+    'SITE' : '__ISP_SITE__',
+    'EMAIL' : '__EMAIL__',
 }
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -25,9 +25,9 @@ PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'YNH_DB_NAME',
-        'USER': 'YNH_DB_USER',
-        'PASSWORD': 'YNH_DB_PASSWORD',
+        'NAME': '__DB__NAME__',
+        'USER': '__DB_USER__',
+        'PASSWORD': '__DB_PWD__',
         'HOST': '',  # Empty for localhost through domain sockets
         'PORT': '',  # Empty for default
     },
