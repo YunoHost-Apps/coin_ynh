@@ -26,11 +26,6 @@ fi
 # Remove the dedicated systemd config
 ynh_remove_systemd_config
 
-#=================================================
-# REMOVE NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..." --weight=1
-
 # Remove the dedicated NGINX config
 ynh_remove_nginx_config
 
