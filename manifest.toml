@@ -34,12 +34,6 @@ ram.runtime = "50M"
     [install.admin]
     type = "user"
 
-    [install.email]
-    ask.en = "Choose email were send notification"
-    ask.fr = "Choisissez l'email vers lequel envoyer les notifications"
-    type = "string"
-    example = "admin@example.tld"
-
     [install.isp_name]
     ask.en = "Enter your ISP name"
     ask.fr = "Indiquez le nom de votre FAI"
