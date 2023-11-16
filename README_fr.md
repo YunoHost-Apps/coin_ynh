@@ -5,7 +5,8 @@ It shall NOT be edited by hand.
 
 # Coin pour YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/coin.svg)](https://dash.yunohost.org/appci/app/coin) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/coin.svg)](https://dash.yunohost.org/appci/app/coin) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+
 [![Installer Coin avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 
 *[Read this readme in english.](./README.md)*
@@ -28,7 +29,7 @@ COIN is an Information System designed for associative ISPs in the FFDN.
 
 * Site officiel de l’app : <https://code.ffdn.org/FFDN/coin>
 * Dépôt de code officiel de l’app : <https://code.ffdn.org/ffdn/coin>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_coin>
+* YunoHost Store: <https://apps.yunohost.org/app/coin>
 * Signaler un bug : <https://github.com/YunoHost-Apps/coin_ynh/issues>
 
 ## Informations pour les développeurs
