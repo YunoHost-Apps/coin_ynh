@@ -8,10 +8,10 @@ DEBUG = TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = ['{{ domain }}']
 
 URL_PREFIX = '{{ prefix }}'
-STATIC_ROOT = '{{ final_path }}/static'
+STATIC_ROOT = '{{ install_dir }}/static'
 NOTIFICATION_EMAILS = ['{{ email }}']
 DEFAULT_FROM_EMAIL = 'notifier@{{ domain }}'
-SITE_URL = "https://{{ domain }}{{ path_url }}"
+SITE_URL = "https://{{ domain }}{{ path }}"
 SECRET_KEY = '{{ secret }}'
 ISP = {
     'NAME': '{{ isp_name }}',
