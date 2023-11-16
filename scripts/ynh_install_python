@@ -34,7 +34,7 @@ pyenv_dependencies="make build-essential libssl-dev zlib1g-dev libbz2-dev librea
 # However, $PATH is duplicated into $ynh_python_path to outlast any manipulation of $PATH
 # You can use the variable `$ynh_python_load_path` to quickly load your Python version
 # in $PATH for an usage into a separate script.
-# Exemple: $ynh_python_load_path $final_path/script_that_use_pip.sh`
+# Exemple: $ynh_python_load_path $install_dir/script_that_use_pip.sh`
 #
 #
 # Finally, to start a Python service with the correct version, 2 solutions
@@ -78,7 +78,7 @@ ynh_use_python () {
 	ynh_python_load_path="PATH=$PATH"
 
 	# Sets the local application-specific Python version
-	pushd $final_path
+	pushd $install_dir
 		$pyenv_install_dir/bin/pyenv local $python_version
 	popd
 }
