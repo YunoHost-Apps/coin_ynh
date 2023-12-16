@@ -1,166 +1,60 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
-source ynh_install_python
 source /usr/share/yunohost/helpers
 
-#=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-ynh_clean_setup () {
-	true
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
-
-#=================================================
-# RETRIEVE ARGUMENTS FROM THE MANIFEST
-#=================================================
-
-export domain=$YNH_APP_ARG_DOMAIN
-export path_url=/
-export admin=$YNH_APP_ARG_ADMIN
-export email=$YNH_APP_ARG_EMAIL
-export isp_name=$YNH_APP_ARG_ISP_NAME
-export isp_site=$YNH_APP_ARG_ISP_SITE
-is_public=1
 export secret=$(ynh_string_random 24)
-
-export app=$YNH_APP_INSTANCE_NAME
-
-#=================================================
-# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
-#=================================================
-ynh_script_progression --message="Validating installation parameters..." --weight=1
-
-export final_path=/opt/$app
-test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
-
-# Register (book) web path
-ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
-
-#=================================================
-# STORE SETTINGS FROM MANIFEST
-#=================================================
-ynh_script_progression --message="Storing installation settings..." --weight=1
-
-ynh_app_setting_set --app=$app --key=domain --value=$domain
-ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=email --value=$email
-ynh_app_setting_set --app=$app --key=isp_name --value=$isp_name
-ynh_app_setting_set --app=$app --key=isp_site --value=$isp_site
-
-#=================================================
-# STANDARD MODIFICATIONS
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Installing dependencies..." --weight=1
-
-ynh_install_app_dependencies $pkg_dependencies
-ynh_install_python --python_version=$python_version
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --weight=1
-
-# Create a system user
-ynh_system_user_create --username=$app
-
-#=================================================
-# CREATE A POSTGRESQL DATABASE
-#=================================================
-ynh_script_progression --message="Creating a PostgreSQL database..." --weight=1
-
-export db_name=$(ynh_sanitize_dbid --db_name=$app)
-export db_user=$db_name
-ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
-export db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." --weight=1
+ynh_script_progression --message="Setting up source files..." 
 
-ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path"
+ynh_setup_source --dest_dir="$install_dir"
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --weight=1
-
-# Create a dedicated NGINX config
-ynh_add_nginx_config
+chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # SPECIFIC SETUP
 #=================================================
 # PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing more dependencies..." --weight=1
+ynh_script_progression --message="Installing more dependencies..." 
 
-pushd "$final_path"
-	ynh_use_python
-	ynh_exec_warn_less $ynh_pip install --upgrade pip
-	ynh_exec_warn_less $ynh_pip install gunicorn
-	echo "django-auth-ldap<1.4" >> $final_path/requirements.txt
-	ynh_exec_warn_less $ynh_pip install -r $final_path/requirements.txt
+pushd "$install_dir"
+    python3 -m venv venv
+    venv/bin/pip install --upgrade pip
+    venv/bin/pip install gunicorn
+	#echo "django-auth-ldap<1.4" >> $install_dir/requirements.txt
+    venv/bin/pip install -r requirements.txt
 popd
 
 #=================================================
 # CONFIGURATION DJANGO
 #=================================================
-ynh_script_progression --message="Configuring application..." --weight=1
+ynh_script_progression --message="Configuring application..." 
 
-export prefix="${path_url#"/"}/"
+export prefix="${path#"/"}/"
 prefix=${prefix%"/"}
-ynh_render_template ../conf/local.py.j2 "$final_path/coin/settings_local.py"
-ynh_store_file_checksum --file="$final_path/coin/settings_local.py"
+ynh_render_template --template="local.py.j2" --destination="$install_dir/coin/settings_local.py"
+ynh_store_file_checksum --file="$install_dir/coin/settings_local.py"
 
-#=================================================
 # SERVE STATIC FILES IN PRODUCTION MODE
-#=================================================
+ln -s $install_dir/$app/static $install_dir/static
 
-ln -s $final_path/$app/static $final_path/static
-
-#=================================================
-# SETUP DATABASE
-#=================================================
-
-# Set permissions
-chown -R $app:www-data $final_path
-
-pushd $final_path
+pushd $install_dir
 	ynh_exec_warn_less $ynh_python manage.py migrate --noinput
 	ynh_exec_warn_less $ynh_python manage.py collectstatic --noinput
 popd
 
 # Set permissions to directory
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
-#=================================================
-# CONFIGURE LOG DIR
-#=================================================
-
+# Setup log permissions
 mkdir -p /var/log/$app
 chown -R $app /var/log/$app
 chown -R $app:www-data "/var/log/$app"
@@ -168,56 +62,33 @@ chown -R $app:www-data "/var/log/$app"
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a configuration file..." --weight=1
+ynh_script_progression --message="Adding a configuration file..." 
 
-ynh_add_config --template="../conf/gunicorn_config.py" --destination="$final_path/gunicorn_config.py"
+ynh_add_config --template="gunicorn_config.py" --destination="$install_dir/gunicorn_config.py"
 
-chown $app:www-data "$final_path/gunicorn_config.py"
+chown $app:www-data "$install_dir/gunicorn_config.py"
 
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Configuring a systemd service..." --weight=1
+ynh_script_progression --message="Configuring system..."
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# INTEGRATE SERVICE IN YUNOHOST
-#=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
-
+# Integrating service in YunoHost
 yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression --message="Starting systemd service..." 
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Configuring permissions..." --weight=1
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# Everyone can access the app.
-	# The "main" permission is automatically created before the install script.
-	ynh_permission_update --permission="main" --add="visitors"
-fi
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT

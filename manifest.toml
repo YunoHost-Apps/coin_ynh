@@ -1,0 +1,73 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "coin"
+name = "Coin"
+description.en = "Member dashboard for non profit isp."
+description.fr = "Coin est un Outil pour un Internet Neutre."
+
+version = "20220401~ynh1"
+
+maintainers = ["ljf"]
+
+[upstream]
+license = "AGPL-3.0-or-later"
+website = "https://code.ffdn.org/FFDN/coin"
+code = "https://code.ffdn.org/ffdn/coin"
+
+[integration]
+yunohost = ">= 11.0.0"
+architectures = "all"
+multi_instance = true
+ldap = false
+sso = false
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    type = "domain"
+
+    [install.admin]
+    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    type = "user"
+
+    [install.email]
+    ask.en = "Choose email were send notification"
+    ask.fr = "Choisissez l'email vers lequel envoyer les notifications"
+    type = "string"
+    example = "admin@example.tld"
+
+    [install.isp_name]
+    ask.en = "Enter your ISP name"
+    ask.fr = "Indiquez le nom de votre FAI"
+    type = "string"
+    example = "My ISP"
+
+    [install.isp_site]
+    ask.en = "Enter the address of your ISP website"
+    ask.fr = "Saisissez l'adresse du siteweb de votre FAI"
+    type = "string"
+    example = "https://www.exemple.tld"
+
+[resources]
+        [resources.sources.main]
+        url = "https://code.ffdn.org/ffdn/coin/-/archive/afcf0846f939e80f34956d5f24f7bdd6a5058282/coin-afcf0846f939e80f34956d5f24f7bdd6a5058282.tar.gz"
+        sha256 = "71a2570a7f145ae826042853f7af2dff46350ef70f83698871b14fa7f9884219"
+
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.apt]
+    packages = "gunicorn, libldap2-dev, libpq-dev, libsasl2-dev, libjpeg-dev, libxml2-dev, libxslt1-dev, libffi-dev, libpango1.0-0, postgresql, postgresql-contrib, postgresql-server-dev-13"
+
+    [resources.database]
+    type = "postgresql"
