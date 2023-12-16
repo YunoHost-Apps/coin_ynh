@@ -50,7 +50,7 @@ ynh_script_progression --message="Configuring Django..." --weight=1
 export prefix="${path#"/"}/"
 prefix=${prefix%"/"}
 ynh_backup_if_checksum_is_different --file="$install_dir/coin/settings_local.py"
-ynh_render_template ../conf/local.py.j2 "$install_dir/coin/setings_local.py"
+ynh_render_template ../conf/local.py.j2 "$install_dir/coin/settings_local.py"
 ynh_store_file_checksum --file="$install_dir/coin/settings_local.py"
 
 ynh_add_config --template="../conf/gunicorn_config.py" --destination="$install_dir/gunicorn_config.py"

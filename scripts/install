@@ -38,7 +38,7 @@ ynh_script_progression --message="Configuring application..."
 
 export prefix="${path#"/"}/"
 prefix=${prefix%"/"}
-ynh_render_template --template="local.py.j2" --destination="$install_dir/coin/settings_local.py"
+ynh_render_template ../conf/local.py.j2 "$install_dir/coin/settings_local.py"
 ynh_store_file_checksum --file="$install_dir/coin/settings_local.py"
 
 # SERVE STATIC FILES IN PRODUCTION MODE
