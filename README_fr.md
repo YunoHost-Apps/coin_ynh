@@ -16,14 +16,25 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 
 ## Vue d’ensemble
 
-COIN is an Information System designed for associative ISPs in the FFDN.
+COIN est un système d'information pour FAI associatif dans la FFDN
+
+### Fonctionnalités
+
+- Fourni une interface pour les membres
+- Gestion des adhésions
+- Gestion des demandes de services tels que VPN, VPS, Housing, compte externe, etc ...
+    - gestion des pools d'IP
+    - des hooks peuvent être ajoutés à l'interface pour s'interfacer avec la "vraie" infra et provisionner les services depuis l'admin
+    - les membres peuvent voir le status et infos de leurs services depuis leur espace
+    - gestion des factures, des rappels, import des paiements de la banque, calcul de solde
+- Optionnel : gestion de mailing liste, prêt de matériel
 
 
-**Version incluse :** 20220401~ynh1
+**Version incluse :** 20231216~ynh1
 
 ## Captures d’écran
 
-![Capture d’écran de Coin](./doc/screenshots/user-subscriptions.png)
+![Capture d’écran de Coin](./doc/screenshots/screenshot.png)
 
 ## Documentations et ressources
 
