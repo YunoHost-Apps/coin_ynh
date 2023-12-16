@@ -1,0 +1,73 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "coin"
+name = "Coin"
+description.en = "Member dashboard for non profit isp."
+description.fr = "Coin est un Outil pour un Internet Neutre."
+
+version = "20231216~ynh1"
+
+maintainers = ["ljf", "aleks"]
+
+[upstream]
+license = "AGPL-3.0-or-later"
+website = "https://code.ffdn.org/FFDN/coin"
+code = "https://code.ffdn.org/ffdn/coin"
+
+[integration]
+yunohost = ">= 11.0.0"
+architectures = "all"
+multi_instance = false
+ldap = false
+sso = false
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    type = "domain"
+
+    [install.admin]
+    # this is a generic question - ask strings are automatically handled by Yunohost's core
+    type = "user"
+
+    [install.email]
+    ask.en = "Choose email were send notification"
+    ask.fr = "Choisissez l'email vers lequel envoyer les notifications"
+    type = "string"
+    example = "admin@example.tld"
+
+    [install.isp_name]
+    ask.en = "Enter your ISP name"
+    ask.fr = "Indiquez le nom de votre FAI"
+    type = "string"
+    example = "My ISP"
+
+    [install.isp_site]
+    ask.en = "Enter the address of your ISP website"
+    ask.fr = "Saisissez l'adresse du siteweb de votre FAI"
+    type = "string"
+    example = "https://www.exemple.tld"
+
+[resources]
+        [resources.sources.main]
+        url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
+        sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.permissions]
+    main.url = "/"
+    main.allowed = "visitors"
+
+    [resources.apt]
+    packages = "gunicorn, python3, python3-venv, libpq-dev, libsasl2-dev, libjpeg-dev, libxml2-dev, libxslt1-dev, libpango1.0-0, postgresql, postgresql-contrib, postgresql-server-dev-13"
+
+    [resources.database]
+    type = "postgresql"
