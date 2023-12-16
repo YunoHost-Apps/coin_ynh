@@ -62,7 +62,7 @@ chown $app:www-data "$install_dir/gunicorn_config.py"
 ynh_script_progression --message="Migrating database..." --weight=1
 
 pushd "$install_dir"
-	ynh_exec_warn_less $ynh_python manage.py migrate --noinput
+	ynh_exec_warn_less venv/bin/python3 manage.py migrate --noinput
 popd
 
 #=================================================
@@ -71,7 +71,7 @@ popd
 ynh_script_progression --message="Collecting files..." --weight=1
 
 pushd "$install_dir"
-	ynh_exec_warn_less $ynh_python manage.py collectstatic --noinput
+	ynh_exec_warn_less venv/bin/python3 manage.py collectstatic --noinput
 popd
 
 chmod 750 "$install_dir"
