@@ -55,8 +55,8 @@ ram.runtime = "50M"
 
 [resources]
         [resources.sources.main]
-        url = "https://code.ffdn.org/ffdn/coin/-/archive/c891075.tar.gz"
-        sha256 = "104448a644ed20248ea3d47a63ee2685f0fb3f82e7411f06b96af24addfc100c"
+        url = "https://code.ffdn.org/ffdn/coin/-/archive/4336141.tar.gz"
+        sha256 = "d2c98d52eedbd74cfbec46144ae0a46036322916321b6bac519e98717965fcb1"
 
     [resources.system_user]
 
