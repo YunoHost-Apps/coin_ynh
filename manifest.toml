@@ -69,6 +69,5 @@ ram.runtime = "50M"
     [resources.apt]
     packages = "gunicorn, python3, python3-venv, libldap2-dev, libpq-dev, libsasl2-dev, libjpeg-dev, libxml2-dev, libxslt1-dev, libffi-dev, libpango1.0-0, postgresql, postgresql-contrib, postgresql-server-dev-13"
 
-
     [resources.database]
     type = "postgresql"
