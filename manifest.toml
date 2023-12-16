@@ -65,6 +65,7 @@ ram.runtime = "50M"
 
     [resources.permissions]
     main.url = "/"
+    main.allowed = "visitors"
 
     [resources.apt]
     packages = "gunicorn, libldap2-dev, libpq-dev, libsasl2-dev, libjpeg-dev, libxml2-dev, libxslt1-dev, libffi-dev, libpango1.0-0, postgresql, postgresql-contrib, postgresql-server-dev-13"
