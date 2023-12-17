@@ -47,12 +47,8 @@ chown -R $app:www-data "$install_dir"
 #=================================================
 ynh_script_progression --message="Configuring Django..." --weight=1
 
-export prefix="${path#"/"}/"
-prefix=${prefix%"/"}
-ynh_backup_if_checksum_is_different --file="$install_dir/coin/settings_local.py"
-ynh_render_template ../conf/local.py.j2 "$install_dir/coin/settings_local.py"
-ynh_store_file_checksum --file="$install_dir/coin/settings_local.py"
-
+# NB: We do NOT regen the settings_local.py using the template
+# because we absolutely don't want to overwrite it
 chmod 400 "$install_dir/coin/settings_local.py"
 chown $app "$install_dir/coin/settings_local.py"
 
