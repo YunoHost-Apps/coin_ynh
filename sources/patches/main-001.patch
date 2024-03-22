@@ -1,0 +1,21 @@
+From 43585e806da2002b4b070489e2f6db6aafb3ca2f Mon Sep 17 00:00:00 2001
+From: orhtej2 <2871798+orhtej2@users.noreply.github.com>
+Date: Sat, 10 Feb 2024 20:01:35 +0100
+Subject: [PATCH] Use newer Psycopg
+
+---
+ exporter/src/app/browser.cljs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/requirements.txt b/requierement.txt
+index 3cbcf2b98..c2c44e774 100644
+--- a/requirements.txt
++++ b/requierement.txt
+@@ -2,1 +2,1 @@
+Django>=2.2,<2.3
+- psycopg2>=2.8,<2.9
++ psycopg2>=2.9,<3.0
+# To match django-ldapdb version:
+#python-ldap>=3.0,<3.
+-- 
+2.42.0.windows.2
