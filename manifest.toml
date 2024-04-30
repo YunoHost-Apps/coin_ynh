@@ -54,10 +54,10 @@ ram.runtime = "50M"
     example = "https://www.exemple.tld"
 
 [resources]
-        [resources.sources.main]
-        url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
-        sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
-        autoupdate.strategy = "latest_gitlab_commit"
+    [resources.sources.main]
+    url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
+    sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
+    autoupdate.strategy = "latest_gitlab_commit"
 
     [resources.system_user]
     allow_email = true
