@@ -28,7 +28,7 @@ pushd "$install_dir"
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install gunicorn
-	#echo "django-auth-ldap<1.4" >> $install_dir/requirements.txt
+    echo "django-auth-ldap<1.4" >> $install_dir/requirements.txt
     venv/bin/pip install -r requirements.txt
 popd
 
