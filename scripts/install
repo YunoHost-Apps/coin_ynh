@@ -9,7 +9,7 @@ ynh_app_setting_set --app=$app --key=secret --value=$secret
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." 
+ynh_script_progression --message="Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
 
@@ -22,7 +22,7 @@ chown -R $app:www-data "$install_dir"
 #=================================================
 # PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing more dependencies..." 
+ynh_script_progression --message="Installing more dependencies..."
 
 pushd "$install_dir"
     python3 -m venv venv
@@ -35,7 +35,7 @@ popd
 #=================================================
 # CONFIGURATION DJANGO
 #=================================================
-ynh_script_progression --message="Configuring application..." 
+ynh_script_progression --message="Configuring application..."
 
 export prefix="${path#"/"}/"
 prefix=${prefix%"/"}
@@ -65,7 +65,7 @@ chown -R $app:www-data "/var/log/$app"
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a configuration file..." 
+ynh_script_progression --message="Adding a configuration file..."
 
 ynh_add_config --template="gunicorn_config.py" --destination="$install_dir/gunicorn_config.py"
 
@@ -88,7 +88,7 @@ yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting systemd service..." 
+ynh_script_progression --message="Starting systemd service..."
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
