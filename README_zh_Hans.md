@@ -3,7 +3,7 @@
 请勿手动编辑。
 -->
 
-# YunoHost 的 Coin
+# YunoHost 上的 Coin
 
 [![集成程度](https://dash.yunohost.org/integration/coin.svg)](https://dash.yunohost.org/appci/app/coin) ![工作状态](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
 
