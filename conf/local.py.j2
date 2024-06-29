@@ -29,13 +29,18 @@ DATABASES = {
         'USER': '{{ db_user }}',
         'PASSWORD': '{{ db_pwd }}',
         'HOST': '127.0.0.1',
-        'PORT': '5432', 
+        'PORT': '5432',
     },
 }
 
 FEEDS = (('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3),)
 
-
+# Email settings
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST = '{{ domain }}'
+EMAIL_HOST_USER = '{{ app }}@{{ domain }}'
+EMAIL_HOST_PASSWORD = '{{ mail_pwd }}'
 
 #    # Tous acces
 #    # parametrer SSO en protect_uris
