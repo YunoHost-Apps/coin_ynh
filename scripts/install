@@ -37,8 +37,6 @@ popd
 #=================================================
 ynh_script_progression --message="Configuring application..."
 
-prefix="${path#"/"}/"
-prefix=${prefix%"/"}
 ynh_add_config --jinja --template=local.py.j2 --destination="$install_dir/coin/settings_local.py"
 chmod 400 "$install_dir/coin/settings_local.py"
 chown $app "$install_dir/coin/settings_local.py"
