@@ -17,7 +17,7 @@ website = "https://code.ffdn.org/FFDN/coin"
 code = "https://code.ffdn.org/ffdn/coin"
 
 [integration]
-yunohost = ">= 11.0.0"
+yunohost = ">= 11.2.0"
 architectures = "all"
 multi_instance = false
 ldap = false
@@ -66,12 +66,13 @@ ram.runtime = "50M"
     default = "admins"
 
 [resources]
-        [resources.sources.main]
-        url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
-        sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
-        autoupdate.strategy = "latest_gitlab_commit"
+    [resources.sources.main]
+    url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
+    sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
+    autoupdate.strategy = "latest_gitlab_commit"
 
     [resources.system_user]
+    allow_email = true
 
     [resources.install_dir]
 
@@ -89,7 +90,7 @@ ram.runtime = "50M"
     packages = ["gunicorn",
         "python3", "python3-venv", "python3-dev",
         "libpq-dev", "libsasl2-dev", "libjpeg-dev", "libxml2-dev", "libxslt1-dev", "libpango1.0-0",
-        "postgresql", "postgresql-contrib", "postgresql-server-dev-all",
+        "postgresql", "postgresql-contrib", "postgresql-server-dev-13",
         "libsasl2-dev", "libldap2-dev"]
 
     [resources.database]

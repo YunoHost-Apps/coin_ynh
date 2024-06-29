@@ -35,7 +35,12 @@ DATABASES = {
 
 FEEDS = (('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3),)
 
-
+# Email settings
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST = '{{ domain }}'
+EMAIL_HOST_USER = '{{ app }}@{{ domain }}'
+EMAIL_HOST_PASSWORD = '{{ mail_pwd }}'
 
 # Tous acces
 import ldap
