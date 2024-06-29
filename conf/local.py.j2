@@ -7,7 +7,8 @@ DEBUG = TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['{{ domain }}']
 
-URL_PREFIX = '{{ prefix }}'
+# Prefix is hard coded for now as the app can only be installed on whole domain
+URL_PREFIX = ''
 STATIC_ROOT = '{{ install_dir }}/static'
 NOTIFICATION_EMAILS = ['{{ email }}']
 DEFAULT_FROM_EMAIL = 'notifier@{{ domain }}'

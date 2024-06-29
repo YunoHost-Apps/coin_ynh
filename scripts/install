@@ -3,7 +3,7 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-export secret=$(ynh_string_random 24)
+secret=$(ynh_string_random 24)
 ynh_app_setting_set --app=$app --key=secret --value=$secret
 
 #=================================================
@@ -37,10 +37,7 @@ popd
 #=================================================
 ynh_script_progression --message="Configuring application..."
 
-export prefix="${path#"/"}/"
-prefix=${prefix%"/"}
-ynh_render_template ../conf/local.py.j2 "$install_dir/coin/settings_local.py"
-ynh_store_file_checksum --file="$install_dir/coin/settings_local.py"
+ynh_add_config --jinja --template=local.py.j2 --destination="$install_dir/coin/settings_local.py"
 chmod 400 "$install_dir/coin/settings_local.py"
 chown $app "$install_dir/coin/settings_local.py"
 
