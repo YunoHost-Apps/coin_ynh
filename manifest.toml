@@ -49,7 +49,7 @@ ram.runtime = "50M"
 
     [install.isp_site]
     ask.en = "Enter the address of your ISP website"
-    ask.fr = "Saisissez l'adresse du siteweb de votre FAI"
+    ask.fr = "Saisissez l'adresse du site web de votre FAI"
     type = "string"
     example = "https://www.exemple.tld"
 
