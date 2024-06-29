@@ -17,7 +17,7 @@ website = "https://code.ffdn.org/FFDN/coin"
 code = "https://code.ffdn.org/ffdn/coin"
 
 [integration]
-yunohost = ">= 11.2.0"
+yunohost = ">= 11.2.13"
 architectures = "all"
 multi_instance = false
 ldap = false
@@ -49,17 +49,18 @@ ram.runtime = "50M"
 
     [install.isp_site]
     ask.en = "Enter the address of your ISP website"
-    ask.fr = "Saisissez l'adresse du siteweb de votre FAI"
+    ask.fr = "Saisissez l'adresse du site web de votre FAI"
     type = "string"
     example = "https://www.exemple.tld"
 
 [resources]
-        [resources.sources.main]
-        url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
-        sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
-        autoupdate.strategy = "latest_gitlab_commit"
+    [resources.sources.main]
+    url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
+    sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
+    autoupdate.strategy = "latest_gitlab_commit"
 
     [resources.system_user]
+    allow_email = true
 
     [resources.install_dir]
 
