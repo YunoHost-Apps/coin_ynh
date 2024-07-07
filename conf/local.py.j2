@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import os
 from .settings_base import *
+from .django_ldap_extension import *
 
 DEBUG = TEMPLATE_DEBUG = False
 
@@ -43,9 +44,9 @@ EMAIL_HOST = '{{ domain }}'
 EMAIL_HOST_USER = '{{ app }}@{{ domain }}'
 EMAIL_HOST_PASSWORD = '{{ mail_pwd }}'
 
-# Tous acces
+# LDAP authentication and group management
 import ldap
-from django_auth_ldap.config import LDAPSearch, MemberDNGroupType
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion, MemberDNGroupType, LDAPGroupType
 AUTHENTICATION_BACKENDS = (
     'django_auth_ldap.backend.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -63,13 +64,20 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
     "is_staff": "cn={{ app }}.staff,ou=permission,dc=yunohost,dc=org",
     "is_superuser": "cn={{ app }}.superadmin,ou=permission,dc=yunohost,dc=org"
 }
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=permission,dc=yunohost,dc=org", ldap.SCOPE_SUBTREE)
-AUTH_LDAP_GROUP_TYPE = MemberDNGroupType("inheritPermission", "permissionYnh")
+AUTH_LDAP_GROUP_SEARCH = LDAPSearchUnion(
+    LDAPSearch("ou=permission,dc=yunohost,dc=org", ldap.SCOPE_SUBTREE, filterstr=u'(cn=coin.*)'),
+    LDAPSearch("ou=groups,dc=yunohost,dc=org", ldap.SCOPE_SUBTREE)
+)
+AUTH_LDAP_GROUP_TYPE = MemberDNGroupTypeUnion(
+    MemberDNGroupType("inheritPermission"), # permissionYnh
+    MemberDNGroupType("member")) # groupOfNamesYnh
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
 AUTH_LDAP_AUTHORIZE_ALL_USERS = False
 AUTH_LDAP_FIND_GROUP_PERMS = True
 AUTH_LDAP_CACHE_GROUPS = True
 AUTH_LDAP_GROUP_CACHE_TIMEOUT = 1000
+# Link Yunohost group with django permission group
+AUTH_LDAP_MIRROR_GROUPS_EXCEPT = ("{{ app }}.main", "{{ app }}.staff", "{{ app }}.superadmin")
 # import logging
 # logger = logging.getLogger('django_auth_ldap')
 # logger.addHandler(logging.StreamHandler())
