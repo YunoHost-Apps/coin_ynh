@@ -5,7 +5,7 @@ Il NE doit PAS être modifié à la main.
 
 # Coin pour YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/coin.svg)](https://dash.yunohost.org/appci/app/coin) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![Niveau d’intégration](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
 
 [![Installer Coin avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 
@@ -30,7 +30,7 @@ COIN est un système d'information pour FAI associatif dans la FFDN
 - Optionnel : gestion de mailing liste, prêt de matériel
 
 
-**Version incluse :** 20231216~ynh1
+**Version incluse :** 20231216~ynh2
 
 ## Captures d’écran
 

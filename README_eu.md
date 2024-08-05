@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Coin YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/coin.svg)](https://dash.yunohost.org/appci/app/coin) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
 
 [![Instalatu Coin YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 
@@ -30,7 +30,7 @@ COIN is an Information System designed for associative ISPs in the FFDN.
 - Optional features: mailing list, hardware provisionning
 
 
-**Paketatutako bertsioa:** 20231216~ynh1
+**Paketatutako bertsioa:** 20231216~ynh2
 
 ## Pantaila-argazkiak
 

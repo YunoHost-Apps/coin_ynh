@@ -7,10 +7,11 @@ DEBUG = TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['{{ domain }}']
 
-URL_PREFIX = '{{ prefix }}'
+# Prefix is hard coded for now as the app can only be installed on whole domain
+URL_PREFIX = ''
 STATIC_ROOT = '{{ install_dir }}/static'
 NOTIFICATION_EMAILS = ['{{ email }}']
-DEFAULT_FROM_EMAIL = 'notifier@{{ domain }}'
+DEFAULT_FROM_EMAIL = '{{ app }}@{{ domain }}'
 SITE_URL = "https://{{ domain }}{{ path }}"
 SECRET_KEY = '{{ secret }}'
 ISP = {
@@ -29,13 +30,18 @@ DATABASES = {
         'USER': '{{ db_user }}',
         'PASSWORD': '{{ db_pwd }}',
         'HOST': '127.0.0.1',
-        'PORT': '5432', 
+        'PORT': '5432',
     },
 }
 
 FEEDS = (('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3),)
 
-
+# Email settings
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST = '{{ domain }}'
+EMAIL_HOST_USER = '{{ app }}@{{ domain }}'
+EMAIL_HOST_PASSWORD = '{{ mail_pwd }}'
 
 #    # Tous acces
 #    # parametrer SSO en protect_uris

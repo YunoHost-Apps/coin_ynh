@@ -1,4 +1,4 @@
-command = '__INSTALL_DIR/venv/bin/gunicorn'
+command = '__INSTALL_DIR__/venv/bin/gunicorn'
 pythonpath = '__INSTALL_DIR__'
 workers = 4
 user = '__APP__'

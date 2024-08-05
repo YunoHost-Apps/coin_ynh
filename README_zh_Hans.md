@@ -5,7 +5,7 @@
 
 # YunoHost 上的 Coin
 
-[![集成程度](https://dash.yunohost.org/integration/coin.svg)](https://dash.yunohost.org/appci/app/coin) ![工作状态](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
 
 [![使用 YunoHost 安装 Coin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 
@@ -30,7 +30,7 @@ COIN is an Information System designed for associative ISPs in the FFDN.
 - Optional features: mailing list, hardware provisionning
 
 
-**分发版本：** 20231216~ynh1
+**分发版本：** 20231216~ynh2
 
 ## 截图
 
