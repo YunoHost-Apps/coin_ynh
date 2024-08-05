@@ -41,6 +41,11 @@ EMAIL_HOST = '{{ domain }}'
 EMAIL_HOST_USER = '{{ app }}@{{ domain }}'
 EMAIL_HOST_PASSWORD = '{{ mail_pwd }}'
 
+# Backend for sendfile.
+# for more details see: https://django-sendfile2.readthedocs.io/en/latest/backends.html
+SENDFILE_BACKEND = 'django_sendfile.backends.nginx'
+SENDFILE_URL = '/protected'
+
 #    # Tous acces
 #    # parametrer SSO en protect_uris
 #    # OU
