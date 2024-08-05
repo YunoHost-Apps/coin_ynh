@@ -7,7 +7,7 @@ name = "Coin"
 description.en = "Member dashboard for non profit isp."
 description.fr = "Coin est un Outil pour un Internet Neutre."
 
-version = "20231216~ynh1"
+version = "20231216~ynh2"
 
 maintainers = ["ljf", "aleks"]
 
