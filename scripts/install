@@ -3,26 +3,25 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-secret=$(ynh_string_random 24)
-ynh_app_setting_set --app=$app --key=secret --value=$secret
+secret=$(ynh_string_random --length=24)
+ynh_app_setting_set --key=secret --value=$secret
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..."
+ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
 
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
-
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # SPECIFIC SETUP
 #=================================================
 # PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing more dependencies..."
+ynh_script_progression "Installing more dependencies..."
 
 pushd "$install_dir"
     python3 -m venv venv
@@ -35,49 +34,48 @@ popd
 #=================================================
 # CONFIGURATION DJANGO
 #=================================================
-ynh_script_progression --message="Configuring application..."
+ynh_script_progression "Configuring application..."
 
-ynh_add_config --jinja --template=local.py.j2 --destination="$install_dir/coin/settings_local.py"
-chmod 400 "$install_dir/coin/settings_local.py"
-chown $app "$install_dir/coin/settings_local.py"
+ynh_config_add --jinja --template=local.py.j2 --destination="$install_dir/coin/settings_local.py"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$install_dir/coin/settings_local.py"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown $app "$install_dir/coin/settings_local.py"
 
 # SERVE STATIC FILES IN PRODUCTION MODE
 ln -s $install_dir/$app/static $install_dir/static
 
 pushd $install_dir
-	ynh_exec_warn_less venv/bin/python3 manage.py migrate --noinput
-	ynh_exec_warn_less venv/bin/python3 manage.py collectstatic --noinput
+	ynh_hide_warnings venv/bin/python3 manage.py migrate --noinput
+	ynh_hide_warnings venv/bin/python3 manage.py collectstatic --noinput
 popd
 
 # Set permissions to directory
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
-
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 # Setup log permissions
 mkdir -p /var/log/$app
-chown -R $app /var/log/$app
-chown -R $app:www-data "/var/log/$app"
+#REMOVEME? Assuming ynh_config_add_logrotate is called, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app /var/log/$app
+#REMOVEME? Assuming ynh_config_add_logrotate is called, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "/var/log/$app"
 
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a configuration file..."
+ynh_script_progression "Adding $app's configuration..."
 
-ynh_add_config --template="gunicorn_config.py" --destination="$install_dir/gunicorn_config.py"
+ynh_config_add --template="gunicorn_config.py" --destination="$install_dir/gunicorn_config.py"
 
-chown $app:www-data "$install_dir/gunicorn_config.py"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown $app:www-data "$install_dir/gunicorn_config.py"
 
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Configuring system..."
+ynh_script_progression "Configuring system..."
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_add_systemd_config
+ynh_config_add_systemd
 
 # Integrating service in YunoHost
 yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
@@ -85,13 +83,13 @@ yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting systemd service..."
+ynh_script_progression "Starting systemd service..."
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemctl --service=$app --action="start"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression "Installation of $app completed"
