@@ -3,31 +3,27 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# STANDARD UPGRADE STEPS
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
+ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemctl --service=$app --action="stop"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
-if [ "$upgrade_type" == "UPGRADE_APP" ]
+# FIXME: this is still supported but the recommendation is now to *always* re-setup the app sources wether or not the upstream sources changed
+if ynh_app_upstream_version_changed
 then
-	ynh_script_progression --message="Upgrading source files..." --weight=1
+	ynh_script_progression "Upgrading source files..."
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$install_dir" --full_replace=1 --keep=coin/settings_local.py
+	ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=coin/settings_local.py
 fi
 
-
-ynh_secure_remove --file="${install_dir}/venv"
+ynh_safe_rm "${install_dir}/venv"
 pushd "$install_dir"
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
@@ -36,69 +32,65 @@ pushd "$install_dir"
     venv/bin/pip install -r requirements.txt
 popd
 
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
-
-#=================================================
-# SPECIFIC UPGRADE
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # CONFIGURE DJANGO
 #=================================================
-ynh_script_progression --message="Configuring Django..." --weight=1
+ynh_script_progression "Configuring Django..."
 
 # NB: We do NOT regen the settings_local.py using the template
 # because we absolutely don't want to overwrite it
-chmod 400 "$install_dir/coin/settings_local.py"
-chown $app "$install_dir/coin/settings_local.py"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$install_dir/coin/settings_local.py"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown $app "$install_dir/coin/settings_local.py"
 
-ynh_add_config --template="../conf/gunicorn_config.py" --destination="$install_dir/gunicorn_config.py"
-chown $app:www-data "$install_dir/gunicorn_config.py"
+ynh_config_add --template="gunicorn_config.py" --destination="$install_dir/gunicorn_config.py"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown $app:www-data "$install_dir/gunicorn_config.py"
 
 #=================================================
 # MIGRATE DB
 #=================================================
-ynh_script_progression --message="Migrating database..." --weight=1
+ynh_script_progression "Migrating database..."
 
 pushd "$install_dir"
-	ynh_exec_warn_less venv/bin/python3 manage.py migrate --noinput
+	ynh_hide_warnings venv/bin/python3 manage.py migrate --noinput
 popd
 
 #=================================================
 # COLLECT FILES
 #=================================================
-ynh_script_progression --message="Collecting files..." --weight=1
+ynh_script_progression "Collecting files..."
 
 pushd "$install_dir"
-	ynh_exec_warn_less venv/bin/python3 manage.py collectstatic --noinput
+	ynh_hide_warnings venv/bin/python3 manage.py collectstatic --noinput
 popd
 
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
-
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Upgrading system configurations..." --weight=1
+ynh_script_progression "Upgrading system configurations..."
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
 # Create a dedicated systemd config
-ynh_add_systemd_config
+ynh_config_add_systemd
 
 yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemctl --service=$app --action="start"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression "Upgrade of $app completed"
