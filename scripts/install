@@ -4,7 +4,7 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 secret=$(ynh_string_random --length=24)
-ynh_app_setting_set --key=secret --value=$secret
+ynh_app_setting_set --key=secret --value="$secret"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -13,9 +13,6 @@ ynh_script_progression "Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # SPECIFIC SETUP
 #=================================================
@@ -37,25 +34,17 @@ popd
 ynh_script_progression "Configuring application..."
 
 ynh_config_add --jinja --template=local.py.j2 --destination="$install_dir/coin/settings_local.py"
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$install_dir/coin/settings_local.py"
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown $app "$install_dir/coin/settings_local.py"
 
 # SERVE STATIC FILES IN PRODUCTION MODE
-ln -s $install_dir/$app/static $install_dir/static
+ln -s "$install_dir/$app"/static "$install_dir"/static
 
-pushd $install_dir
+pushd "$install_dir"
 	ynh_hide_warnings venv/bin/python3 manage.py migrate --noinput
 	ynh_hide_warnings venv/bin/python3 manage.py collectstatic --noinput
 popd
 
 # Set permissions to directory
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
-# Setup log permissions
-mkdir -p /var/log/$app
-#REMOVEME? Assuming ynh_config_add_logrotate is called, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app /var/log/$app
-#REMOVEME? Assuming ynh_config_add_logrotate is called, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "/var/log/$app"
+mkdir -p /var/log/"$app"
 
 #=================================================
 # ADD A CONFIGURATION
@@ -63,8 +52,6 @@ mkdir -p /var/log/$app
 ynh_script_progression "Adding $app's configuration..."
 
 ynh_config_add --template="gunicorn_config.py" --destination="$install_dir/gunicorn_config.py"
-
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown $app:www-data "$install_dir/gunicorn_config.py"
 
 #=================================================
 # SETUP SYSTEMD
@@ -78,7 +65,7 @@ ynh_config_add_nginx
 ynh_config_add_systemd
 
 # Integrating service in YunoHost
-yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -86,7 +73,7 @@ yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.
 ynh_script_progression "Starting systemd service..."
 
 # Start a systemd service
-ynh_systemctl --service=$app --action="start"
+ynh_systemctl --service="$app" --action="start"
 
 #=================================================
 # END OF SCRIPT

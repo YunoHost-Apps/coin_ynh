@@ -11,9 +11,6 @@ ynh_script_progression "Restoring the app main directory..."
 
 ynh_restore "$install_dir"
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
 #=================================================
@@ -21,7 +18,7 @@ ynh_script_progression "Restoring the NGINX web server configuration..."
 
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
-ynh_psql_db_shell  < "./db.sql""
+ynh_psql_db_shell  < "./db.sql"
 
 #=================================================
 # PYTHON DEPENDENCIES
@@ -41,8 +38,7 @@ popd
 # CONFIGURE LOG DIR
 #=================================================
 
-mkdir -p /var/log/$app
-#REMOVEME? Assuming ynh_config_add_logrotate is called, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data /var/log/$app
+mkdir -p /var/log/"$app"
 
 #=================================================
 # RESTORE SYSTEMD
@@ -50,16 +46,16 @@ mkdir -p /var/log/$app
 ynh_script_progression "Restoring $app's systemd service..."
 
 ynh_restore "/etc/systemd/system/$app.service"
-systemctl enable $app.service --quiet
+systemctl enable "$app".service --quiet
 
-yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
 #=================================================
 ynh_script_progression "Reloading NGINX web server and $app's service..."
 
-ynh_systemctl --service=$app --action="start"
+ynh_systemctl --service="$app" --action="start"
 
 ynh_systemctl --service=nginx --action=reload
 
