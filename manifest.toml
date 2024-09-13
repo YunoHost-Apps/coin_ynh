@@ -7,7 +7,7 @@ name = "Coin"
 description.en = "Member dashboard for non profit isp."
 description.fr = "Coin est un Outil pour un Internet Neutre."
 
-version = "20231216~ynh2"
+version = "20240914~ynh1"
 
 maintainers = ["ljf", "aleks"]
 
@@ -54,8 +54,8 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
-    sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
+    url = "https://code.ffdn.org/ffdn/coin/-/archive/6986ba8.tar.gz"
+    sha256 = "2cd45f2c62d238ee543d89a7355be03ed16c02b2df292ce554ba27499e5a66a0"
     autoupdate.strategy = "latest_gitlab_commit"
 
     [resources.system_user]
