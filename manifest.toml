@@ -30,9 +30,6 @@ ram.runtime = "50M"
     [install.domain]
     type = "domain"
 
-    [install.admin]
-    type = "user"
-
     [install.email]
     ask.en = "Choose email were send notification"
     ask.fr = "Choisissez l'email vers lequel envoyer les notifications"
