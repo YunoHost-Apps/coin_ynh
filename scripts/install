@@ -12,6 +12,7 @@ ynh_app_setting_set --app=$app --key=secret --value=$secret
 ynh_script_progression --message="Setting up source files..."
 
 ynh_setup_source --dest_dir="$install_dir"
+cp ../sources/django_ldap_extension.py "$install_dir"/coin/
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
@@ -28,7 +29,7 @@ pushd "$install_dir"
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install gunicorn
-	#echo "django-auth-ldap<1.4" >> $install_dir/requirements.txt
+    echo "django-auth-ldap<1.4" >> $install_dir/requirements.txt
     venv/bin/pip install -r requirements.txt
 popd
 

@@ -5,7 +5,9 @@ EZ editatu eskuz.
 
 # Coin YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![Integrazio maila](https://apps.yunohost.org/badge/integration/coin)](https://ci-apps.yunohost.org/ci/apps/coin/)
+![Funtzionamendu egoera](https://apps.yunohost.org/badge/state/coin)
+![Mantentze egoera](https://apps.yunohost.org/badge/maintained/coin)
 
 [![Instalatu Coin YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 
