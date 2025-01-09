@@ -5,7 +5,9 @@ No se debe editar a mano.
 
 # Coin para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/coin)](https://ci-apps.yunohost.org/ci/apps/coin/)
+![Estado funcional](https://apps.yunohost.org/badge/state/coin)
+![Estado En Mantención](https://apps.yunohost.org/badge/maintained/coin)
 
 [![Instalar Coin con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 
@@ -45,7 +47,7 @@ COIN is an Information System designed for associative ISPs in the FFDN.
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/coin_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/coin_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
