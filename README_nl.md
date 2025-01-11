@@ -5,7 +5,9 @@ Hij mag NIET handmatig aangepast worden.
 
 # Coin voor Yunohost
 
-[![Integratieniveau](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![Mate van functioneren](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Onderhoudsstatus](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![Integratieniveau](https://apps.yunohost.org/badge/integration/coin)](https://ci-apps.yunohost.org/ci/apps/coin/)
+![Mate van functioneren](https://apps.yunohost.org/badge/state/coin)
+![Onderhoudsstatus](https://apps.yunohost.org/badge/maintained/coin)
 
 [![Coin met Yunohost installeren](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 

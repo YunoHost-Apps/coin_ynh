@@ -5,7 +5,9 @@ NON debe editarse manualmente.
 
 # Coin para YunoHost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![Estado de funcionamento](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Estado de mantemento](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/coin)](https://ci-apps.yunohost.org/ci/apps/coin/)
+![Estado de funcionamento](https://apps.yunohost.org/badge/state/coin)
+![Estado de mantemento](https://apps.yunohost.org/badge/maintained/coin)
 
 [![Instalar Coin con YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 

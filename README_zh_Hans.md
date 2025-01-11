@@ -5,7 +5,9 @@
 
 # YunoHost 上的 Coin
 
-[![集成程度](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![集成程度](https://apps.yunohost.org/badge/integration/coin)](https://ci-apps.yunohost.org/ci/apps/coin/)
+![工作状态](https://apps.yunohost.org/badge/state/coin)
+![维护状态](https://apps.yunohost.org/badge/maintained/coin)
 
 [![使用 YunoHost 安装 Coin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 

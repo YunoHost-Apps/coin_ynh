@@ -5,7 +5,9 @@ Ini TIDAK boleh diedit dengan tangan.
 
 # Coin untuk YunoHost
 
-[![Tingkat integrasi](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![Status kerja](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Status pemeliharaan](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![Tingkat integrasi](https://apps.yunohost.org/badge/integration/coin)](https://ci-apps.yunohost.org/ci/apps/coin/)
+![Status kerja](https://apps.yunohost.org/badge/state/coin)
+![Status pemeliharaan](https://apps.yunohost.org/badge/maintained/coin)
 
 [![Pasang Coin dengan YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 

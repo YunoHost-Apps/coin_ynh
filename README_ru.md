@@ -5,7 +5,9 @@
 
 # Coin для YunoHost
 
-[![Уровень интеграции](https://dash.yunohost.org/integration/coin.svg)](https://ci-apps.yunohost.org/ci/apps/coin/) ![Состояние работы](https://ci-apps.yunohost.org/ci/badges/coin.status.svg) ![Состояние сопровождения](https://ci-apps.yunohost.org/ci/badges/coin.maintain.svg)
+[![Уровень интеграции](https://apps.yunohost.org/badge/integration/coin)](https://ci-apps.yunohost.org/ci/apps/coin/)
+![Состояние работы](https://apps.yunohost.org/badge/state/coin)
+![Состояние сопровождения](https://apps.yunohost.org/badge/maintained/coin)
 
 [![Установите Coin с YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=coin)
 
