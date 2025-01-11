@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import os
 from .settings_base import *
 
@@ -40,8 +38,13 @@ FEEDS = (('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3),)
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST = '{{ domain }}'
-EMAIL_HOST_USER = '{{ app }}@{{ domain }}'
+EMAIL_HOST_USER = '{{ app }}'
 EMAIL_HOST_PASSWORD = '{{ mail_pwd }}'
+
+# Backend for sendfile.
+# for more details see: https://django-sendfile2.readthedocs.io/en/latest/backends.html
+SENDFILE_BACKEND = 'django_sendfile.backends.nginx'
+SENDFILE_URL = '/protected'
 
 #    # Tous acces
 #    # parametrer SSO en protect_uris

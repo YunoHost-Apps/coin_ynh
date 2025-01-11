@@ -7,29 +7,25 @@ source /usr/share/yunohost/helpers
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Restoring the app main directory..." --weight=1
+ynh_script_progression "Restoring the app main directory..."
 
-ynh_restore_file --origin_path="$install_dir"
-
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
+ynh_restore "$install_dir"
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Restoring the NGINX web server configuration..." --weight=1
+ynh_script_progression "Restoring the NGINX web server configuration..."
 
-ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
-ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
+ynh_psql_db_shell  < "./db.sql"
 
 #=================================================
 # PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Reinstalling venv..." --weight=1
+ynh_script_progression "Reinstalling venv..."
 
-ynh_secure_remove --file="${install_dir}/venv"
+ynh_safe_rm "${install_dir}/venv"
 pushd "$install_dir"
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
@@ -42,30 +38,31 @@ popd
 # CONFIGURE LOG DIR
 #=================================================
 
-mkdir -p /var/log/$app
-chown -R $app:www-data /var/log/$app
+mkdir -p /var/log/"$app"
+chown -R "$app":"$app" /var/log/"$app"
+chmod -R 750 "/var/log/$app"
 
 #=================================================
 # RESTORE SYSTEMD
 #=================================================
-ynh_script_progression --message="Restoring the systemd configuration..." --weight=1
+ynh_script_progression "Restoring $app's systemd service..."
 
-ynh_restore_file --origin_path="/etc/systemd/system/$app.service"
-systemctl enable $app.service --quiet
+ynh_restore "/etc/systemd/system/$app.service"
+systemctl enable "$app".service --quiet
 
-yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server and $app's service..." --weight=1
+ynh_script_progression "Reloading NGINX web server and $app's service..."
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemctl --service="$app" --action="start"
 
-ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemctl --service=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Restoration completed for $app" --last
+ynh_script_progression "Restoration completed for $app"

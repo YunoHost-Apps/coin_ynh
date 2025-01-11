@@ -30,7 +30,7 @@ COIN is an Information System designed for associative ISPs in the FFDN.
 - Optional features: mailing list, hardware provisionning
 
 
-**Versión actual:** 20231216~ynh2
+**Versión actual:** 20240914~ynh1
 
 ## Capturas
 
@@ -45,7 +45,7 @@ COIN is an Information System designed for associative ISPs in the FFDN.
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/coin_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/coin_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
