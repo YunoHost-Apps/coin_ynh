@@ -32,7 +32,7 @@ COIN est un système d'information pour FAI associatif dans la FFDN
 - Optionnel : gestion de mailing liste, prêt de matériel
 
 
-**Version incluse :** 20240914~ynh1
+**Version incluse :** 20240914~ynh2
 
 ## Captures d’écran
 
