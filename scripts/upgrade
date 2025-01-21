@@ -13,15 +13,9 @@ ynh_systemctl --service=$app --action="stop"
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_script_progression "Upgrading source files..."
 
-# FIXME: this is still supported but the recommendation is now to *always* re-setup the app sources wether or not the upstream sources changed
-if ynh_app_upstream_version_changed
-then
-	ynh_script_progression "Upgrading source files..."
-
-	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=coin/settings_local.py
-fi
+ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=coin/settings_local.py
 
 ynh_safe_rm "${install_dir}/venv"
 pushd "$install_dir"
@@ -62,10 +56,8 @@ popd
 #=================================================
 ynh_script_progression "Upgrading system configurations..."
 
-# Create a dedicated NGINX config
 ynh_config_add_nginx
 
-# Create a dedicated systemd config
 ynh_config_add_systemd
 
 yunohost service add $app --description "$app daemon" --log="/var/log/$app/$app.log"

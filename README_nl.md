@@ -32,7 +32,7 @@ COIN is an Information System designed for associative ISPs in the FFDN.
 - Optional features: mailing list, hardware provisionning
 
 
-**Geleverde versie:** 20240914~ynh1
+**Geleverde versie:** 20240914~ynh2
 
 ## Schermafdrukken
 

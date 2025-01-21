@@ -60,13 +60,10 @@ ynh_config_add --template="gunicorn_config.py" --destination="$install_dir/gunic
 #=================================================
 ynh_script_progression "Configuring system..."
 
-# Create a dedicated NGINX config
 ynh_config_add_nginx
 
-# Create a dedicated systemd config
 ynh_config_add_systemd
 
-# Integrating service in YunoHost
 yunohost service add "$app" --description "$app daemon" --log="/var/log/$app/$app.log"
 
 #=================================================
@@ -74,7 +71,6 @@ yunohost service add "$app" --description "$app daemon" --log="/var/log/$app/$ap
 #=================================================
 ynh_script_progression "Starting systemd service..."
 
-# Start a systemd service
 ynh_systemctl --service="$app" --action="start"
 
 #=================================================
