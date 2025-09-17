@@ -69,8 +69,8 @@ AUTH_LDAP_GROUP_SEARCH = LDAPSearchUnion(
     LDAPSearch("ou=groups,dc=yunohost,dc=org", ldap.SCOPE_SUBTREE)
 )
 AUTH_LDAP_GROUP_TYPE = MemberDNGroupTypeUnion(
-    MemberDNGroupType("inheritPermission"), # permissionYnh
-    MemberDNGroupType("member")) # groupOfNamesYnh
+    MemberDNGroupType("inheritPermission"),  # permissionYnh
+    MemberDNGroupTypeWithoutPrimaryGroup("member"))  # groupOfNamesYnh
 AUTH_LDAP_ALWAYS_UPDATE_USER = True
 AUTH_LDAP_AUTHORIZE_ALL_USERS = False
 AUTH_LDAP_FIND_GROUP_PERMS = True
