@@ -19,6 +19,7 @@ ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=coin/settings_l
 
 ynh_safe_rm "${install_dir}/venv"
 pushd "$install_dir"
+	ynh_replace --match="from pipes import quote" --replace="from shlex import quote" --files=$install_dir/coin/hooks.py
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install gunicorn
