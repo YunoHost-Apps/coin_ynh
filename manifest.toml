@@ -66,9 +66,9 @@ ram.runtime = "50M"
 
 [resources]
     [resources.sources.main]
-    url = "https://code.ffdn.org/ffdn/coin/-/archive/bcaad5f.tar.gz"
-    sha256 = "241d527c7bab5410bcc225d5beeff8286aa8ae649b9711c421624ae96136cdd7"
-    autoupdate.strategy = "latest_gitlab_commit"
+    url = "https://code.ffdn.org/ffdn/coin/-/archive/v1.9.2/coin-v1.9.2.tar.gz"
+    sha256 = "b6baed69946d3c0a80c3e44199028a0fdb016ba0bf3ad315b00992a9f091ccfc"
+    autoupdate.strategy = "latest_gitlab_release"
 
     [resources.system_user]
     allow_email = true
