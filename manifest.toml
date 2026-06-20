@@ -75,7 +75,7 @@ ram.runtime = "50M"
     main.url = "/"
     main.allowed = ["visitors", "all_users"]
     admin.url = "/admin"
-    main.allowed = ["admins"]
+    admin.allowed = ["admins"]
 
     [resources.apt]
     packages = ["gunicorn",
