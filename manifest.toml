@@ -51,22 +51,6 @@ ram.runtime = "50M"
     type = "string"
     example = "https://www.exemple.tld"
 
-    [install.init_staff_permission]
-    ask.en = "Which group will have the staff access"
-    ask.fr = "Quel groupe aura accès l'accès en tant que staff"
-    help.en = "Users of this group should have access to the Coin admin page"
-    help.fr = "Les utilisateurs de ce groupe devrait avoir accès à la page d'administration de Coin"
-    type = "group"
-    default = "admins"
-
-    [install.init_superadmin_permission]
-    ask.en = "Which group will have the superadmin access"
-    ask.fr = "Quel groupe aura accès l'accès en tant que super admin"
-    help.en = "Users of this group should have all access on the Coin admin page"
-    help.fr = "Les utilisateurs de ce groupe devrait avoir tout les accès sur la page d'administration de Coin"
-    type = "group"
-    default = "admins"
-
 [resources]
     [resources.sources.main]
     url = "https://code.ffdn.org/ffdn/coin/-/archive/v1.9.2/coin-v1.9.2.tar.gz"
@@ -82,6 +66,8 @@ ram.runtime = "50M"
     [resources.permissions]
     main.url = "/"
     main.allowed = ["visitors", "all_users"]
+    admin.url = "/admin"
+    main.allowed = ["admins"]
 
     staff.show_tile = false
     staff.label = "Staff"
