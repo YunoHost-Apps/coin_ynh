@@ -21,7 +21,7 @@ ynh_setup_source --dest_dir="$install_dir"
 ynh_script_progression "Installing more dependencies..."
 
 pushd "$install_dir"
-ynh_replace --match="from pipes import quote" --replace="from shlex import quote" --files=$install_dir/hooks.py
+ynh_replace --match="from pipes import quote" --replace="from shlex import quote" --file=$install_dir/coin/hooks.py
     python3 -m venv venv
     venv/bin/pip install --upgrade pip
     venv/bin/pip install gunicorn
