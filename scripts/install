@@ -5,8 +5,8 @@ source /usr/share/yunohost/helpers
 
 secret=$(ynh_string_random --length=24)
 ynh_app_setting_set --key=secret --value="$secret"
-first_name=$(ynh_user_get_info --username="$admin" --key=firstname)
-last_name=$(ynh_user_get_info --username="$admin" --key=lastname)
+#first_name=$(ynh_user_get_info --username="$admin" --key=firstname)
+#last_name=$(ynh_user_get_info --username="$admin" --key=lastname)
 mail=$(ynh_user_get_info --username="$admin" --key=mail)
 
 #=================================================
@@ -45,7 +45,7 @@ ln -s "$install_dir/$app"/static "$install_dir"/static
 pushd "$install_dir"
 	ynh_hide_warnings venv/bin/python3 manage.py migrate --noinput
 	ynh_hide_warnings venv/bin/python3 manage.py collectstatic --noinput
-	ynh_hide_warnings env DJANGO_SUPERUSER_PASSWORD="$admin_pw" venv/bin/python3 manage.py createsuperuser --username=$admin --first_name=$first_name --last_name=$last_name --email=$mail --noinput
+	ynh_hide_warnings env DJANGO_SUPERUSER_PASSWORD="$admin_pw" venv/bin/python3 manage.py createsuperuser --username=$admin --first_name="" --last_name="" --email=$mail --noinput
 popd
 
 # Set permissions to directory
