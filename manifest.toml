@@ -33,6 +33,14 @@ ram.runtime = "50M"
     [install.domain]
     type = "domain"
 
+    [install.admin]
+    type = "user"
+    
+    [install.admin_pw]
+    ask.en = "Please chose a password for the admin user."
+    ask.fr = "Choisissez un mot de passe pour l'administrateur."
+    type = "password"
+    
     [install.email]
     ask.en = "Choose email were send notification"
     ask.fr = "Choisissez l'email vers lequel envoyer les notifications"
@@ -68,12 +76,6 @@ ram.runtime = "50M"
     main.allowed = ["visitors", "all_users"]
     admin.url = "/admin"
     main.allowed = ["admins"]
-
-    staff.show_tile = false
-    staff.label = "Staff"
-
-    superadmin.show_tile = false
-    superadmin.label = "Super admin"
 
     [resources.apt]
     packages = ["gunicorn",
