@@ -8,10 +8,10 @@ It shall NOT be edited by hand.
   Coin, packaged for YunoHost
 </h1>
 
-Member dashboard for non profit isp.
+Member dashboard for non profit isp
 
 [![🌐 Official app website](https://img.shields.io/badge/Official_app_website-darkgreen?style=for-the-badge)](https://code.ffdn.org/FFDN/coin)
-[![Version: 20231216~ynh2](https://img.shields.io/badge/Version-20231216~ynh2-rgb(18,138,11)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/coin/)
+[![Version: 20240914~ynh2](https://img.shields.io/badge/Version-20240914~ynh2-rgb(18,138,11)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/coin/)
 
 <div align="center">
 <a href="https://apps.yunohost.org/app/coin"><img height="100px" src="https://github.com/YunoHost/yunohost-artwork/raw/refs/heads/main/badges/neopossum-badges/badge_more_info_on_the_appstore.svg"/></a>

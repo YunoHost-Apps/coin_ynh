@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import os
 from .settings_base import *
 from .django_ldap_extension import *
@@ -41,7 +39,7 @@ FEEDS = (('ffdn', 'http://www.ffdn.org/fr/rss.xml', 3),)
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST = '{{ domain }}'
-EMAIL_HOST_USER = '{{ app }}@{{ domain }}'
+EMAIL_HOST_USER = '{{ app }}'
 EMAIL_HOST_PASSWORD = '{{ mail_pwd }}'
 
 # LDAP authentication and group management

@@ -4,10 +4,10 @@ packaging_format = 2
 
 id = "coin"
 name = "Coin"
-description.en = "Member dashboard for non profit isp."
-description.fr = "Coin est un Outil pour un Internet Neutre."
+description.en = "Member dashboard for non profit isp"
+description.fr = "Outil pour un Internet Neutre"
 
-version = "20231216~ynh2"
+version = "20240914~ynh2"
 
 maintainers = ["ljf", "aleks"]
 
@@ -20,8 +20,10 @@ code = "https://code.ffdn.org/ffdn/coin"
 yunohost = ">= 12.1.38"
 architectures = "all"
 multi_instance = false
+
 ldap = false
 sso = false
+
 disk = "50M"
 ram.build = "50M"
 ram.runtime = "50M"
@@ -74,6 +76,7 @@ ram.runtime = "50M"
     allow_email = true
 
     [resources.install_dir]
+    group = "www-data:r-x"
 
     [resources.permissions]
     main.url = "/"
