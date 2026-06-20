@@ -37,8 +37,8 @@ ram.runtime = "50M"
     type = "user"
     
     [install.admin_pw]
-    ask.en = "Please chose a password for the admin user."
-    ask.fr = "Choisissez un mot de passe pour l'administrateur."
+    ask.en = "Please chose a password for the admin user"
+    ask.fr = "Choisissez un mot de passe pour l'administrateur"
     type = "password"
     
     [install.email]
