@@ -8,8 +8,8 @@ ynh_app_setting_set --key=secret --value="$secret"
 #firstname=$(ynh_user_get_info --username="$admin" --key=firstname)
 #lastname=$(ynh_user_get_info --username="$admin" --key=lastname)
 mail=$(ynh_user_get_info --username="$admin" --key=mail)
-firstname=null
-lastname=null
+#firstname=null
+#lastname=null
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
