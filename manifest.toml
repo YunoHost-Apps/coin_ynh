@@ -38,12 +38,17 @@ ram.runtime = "50M"
 
     [install.firstname]
     ask.en = "Admin user firstname"
-    ask.fr = "Prénom du compte admin"
+    ask.fr = "Prénom du compte administrateur"
     type = "string"
     
     [install.lastname]
     ask.en = "Admin user lastname"
     ask.fr = "Nom du compte administrateur"
+    type = "string"
+
+    [install.admin_pw]
+    ask.en = "Choose an admin password"
+    ask.fr = "Mot de passe de l'administrateur"
     type = "string"
     
     [install.email]
